@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#155eef" />
+  <title>Store Dashboard</title>
+  <style>
+    :root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5eaf2;--primary:#155eef;--primary-soft:#eaf1ff;--green:#168a52;--green-soft:#eaf8f0;--yellow:#b7791f;--yellow-soft:#fff7e6;--red:#d64545;--red-soft:#fff0f0;--shadow:0 12px 30px rgba(28,51,84,.10)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}a{text-decoration:none;color:inherit}button{font:inherit}.app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:96px}.hero{padding:18px 18px 22px;color:#fff;background:linear-gradient(145deg,#0f4fcb,#155eef 58%,#4a87ff);border-radius:0 0 28px 28px;box-shadow:0 14px 30px rgba(21,94,239,.23)}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.back{display:inline-flex;align-items:center;gap:7px;font-size:13px;background:rgba(255,255,255,.14);padding:9px 11px;border-radius:12px}.actions{display:flex;gap:8px}.icon{width:40px;height:40px;border:0;border-radius:13px;background:rgba(255,255,255,.16);color:#fff}.store-name{margin:18px 0 0;font-size:26px}.meta{margin-top:7px;font-size:13px;opacity:.9}.status-strip{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.status-card{padding:12px;border-radius:15px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16)}.status-card small{display:block;font-size:11px;opacity:.78}.status-card strong{display:block;margin-top:6px;font-size:14px}main{padding:16px 14px 0}.section-title{display:flex;justify-content:space-between;align-items:center;margin:0 4px 10px}.section-title h2{margin:0;font-size:18px}.section-title span{font-size:11px;color:var(--muted)}.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}.alert-panel{background:#fff;border:1px solid #f6d4d4}.alert-list{display:grid;gap:9px}.alert-item{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:14px;background:var(--red-soft);color:#8f2f2f;font-size:13px;line-height:1.5}.alert-item strong{display:block;color:#7c2424}.alert-ok{background:var(--green-soft);color:var(--green)}.todo-list{display:grid;gap:9px}.todo{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fafbfd}.todo-left{display:flex;align-items:center;gap:10px}.todo-time{width:42px;flex:none;font-size:11px;font-weight:800;color:var(--primary)}.todo-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--primary-soft)}.todo-title{font-size:14px;font-weight:800}.todo-sub{margin-top:3px;font-size:11px;color:var(--muted)}.pill{padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800}.pill.yellow{background:var(--yellow-soft);color:var(--yellow)}.pill.red{background:var(--red-soft);color:var(--red)}.pill.green{background:var(--green-soft);color:var(--green)}.staff-summary{display:grid;grid-template-columns:1.25fr .75fr;gap:10px}.staff-box{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}.staff-box h3{margin:0 0 9px;font-size:13px}.staff-names{font-size:14px;font-weight:750;line-height:1.75}.next-time{font-size:21px;font-weight:900;color:var(--primary)}.next-name{margin-top:5px;font-size:13px;font-weight:800}.all-staff{display:inline-flex;margin-top:11px;font-size:12px;color:var(--primary);font-weight:800}.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.feature{min-height:92px;padding:13px;border-radius:16px;background:#fafbfd;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between}.feature-icon{font-size:23px}.feature-title{font-size:14px;font-weight:800}.feature-sub{font-size:10px;color:var(--muted);margin-top:3px}.notice{padding:13px;border-radius:15px;background:#fffaf0;border:1px solid #f6e3b6;font-size:13px;line-height:1.6}nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line)}.nav{border:0;background:transparent;min-height:56px;border-radius:14px;color:#8a94a4;font-size:11px}.nav.active{color:var(--primary);background:var(--primary-soft);font-weight:800}.nav b{display:block;font-size:18px;margin-bottom:4px}.toast{position:fixed;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);opacity:0;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="top">
+      <a class="back" href="index.html">← 返回首頁</a>
+      <div class="actions"><button class="icon" onclick="toast('目前沒有新的通知')">🔔</button><button class="icon" onclick="toast('設定功能後續開放')">⚙️</button></div>
+    </div>
+    <h1 class="store-name" id="storeName">南西店</h1>
+    <div class="meta"><span id="today"></span> · 今日值班：<span id="managerName">Tai（店長）</span></div>
+    <div class="status-strip"><div class="status-card"><small>目前狀態</small><strong>🟢 營業中</strong></div><div class="status-card"><small>現在最優先</small><strong id="priorityText">完成開店 Checklist</strong></div></div>
+  </header>
+  <main>
+    <div class="section-title"><h2>今日警示</h2><span id="alertCount">3 項</span></div>
+    <section class="panel alert-panel"><div class="alert-list" id="alertList"></div></section>
+
+    <div class="section-title"><h2>現在該做什麼</h2><span>依時間排序</span></div>
+    <section class="panel"><div class="todo-list" id="todoList"></div></section>
+
+    <div class="section-title"><h2>目前人力</h2><span id="staffCount">5 人排班</span></div>
+    <section class="panel">
+      <div class="staff-summary">
+        <div class="staff-box"><h3>目前在場</h3><div class="staff-names" id="presentStaff">—</div></div>
+        <div class="staff-box"><h3>下一位到班</h3><div class="next-time" id="nextTime">—</div><div class="next-name" id="nextName">—</div></div>
+      </div>
+      <a class="all-staff" href="schedule.html">查看完整班表 →</a>
+    </section>
+
+    <div class="section-title"><h2>快速功能</h2><span>常用入口</span></div>
+    <section class="feature-grid">
+      <a class="feature" href="checklist.html?type=open"><div class="feature-icon">📋</div><div><div class="feature-title">開店 Checklist</div><div class="feature-sub">今日開店流程</div></div></a>
+      <a class="feature" href="checklist.html?type=close"><div class="feature-icon">🌙</div><div><div class="feature-title">關店 Checklist</div><div class="feature-sub">結帳、清潔、照片</div></div></a>
+      <a class="feature" href="schedule.html"><div class="feature-icon">👥</div><div><div class="feature-title">排班</div><div class="feature-sub">今日人力與班表</div></div></a>
+      <a class="feature" href="bonus.html"><div class="feature-icon">💰</div><div><div class="feature-title">日獎金</div><div class="feature-sub">時數與遲到規則</div></div></a>
+      <a class="feature" href="orders.html"><div class="feature-icon">📦</div><div><div class="feature-title">訂貨</div><div class="feature-sub">建立與追蹤訂單</div></div></a>
+      <a class="feature" href="events.html"><div class="feature-icon">⚠️</div><div><div class="feature-title">營運事件</div><div class="feature-sub">回報與追蹤處理</div></div></a>
+      <a class="feature" href="history.html"><div class="feature-icon">📜</div><div><div class="feature-title">歷史紀錄</div><div class="feature-sub">查詢過往資料</div></div></a>
+    </section>
+
+    <div class="section-title" style="margin-top:16px"><h2>今日公告</h2><span>店內同步</span></div>
+    <section class="panel"><div class="notice">今日午餐尖峰請優先維持點餐、飲料與結帳動線；如有人員遲到，請於事件頁立即回報。</div></section>
+  </main>
+</div>
+<nav><button class="nav" onclick="location.href='index.html'"><b>⌂</b>首頁</button><button class="nav active"><b>▦</b>Dashboard</button><button class="nav" onclick="location.href='checklist.html'"><b>✓</b>Checklist</button><button class="nav" onclick="location.href='events.html'"><b>!</b>事件</button><button class="nav" onclick="location.href='bonus.html'"><b>$</b>獎金</button></nav>
+<div class="toast" id="toast"></div>
+<script>
+const stores={
+  nansi:{name:'南西店',manager:'Tai（店長）',staff:[['10:00','海霞'],['10:00','易達'],['11:00','伊婷'],['11:30','Patricia'],['12:30','Tai（店長）']]},
+  beiche:{name:'北車店',manager:'值班主管',staff:[['10:00','員工 A'],['10:00','員工 B'],['11:30','員工 C'],['12:30','值班主管']]}
+};
+const params=new URLSearchParams(location.search),storeKey=params.get('store')||'nansi',store=stores[storeKey]||stores.nansi;
+const now=new Date(),nowMinutes=now.getHours()*60+now.getMinutes();
+const toMinutes=t=>{const [h,m]=t.split(':').map(Number);return h*60+m};
+
+document.getElementById('storeName').textContent=store.name;
+document.getElementById('managerName').textContent=store.manager;
+document.title=store.name+' Dashboard';
+document.getElementById('today').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(now);
+document.getElementById('staffCount').textContent=store.staff.length+' 人排班';
+
+const present=store.staff.filter(([time])=>toMinutes(time)<=nowMinutes).map(([,name])=>name);
+const next=store.staff.find(([time])=>toMinutes(time)>nowMinutes);
+document.getElementById('presentStaff').innerHTML=present.length?present.join('<br>'):'尚未有人到班';
+document.getElementById('nextTime').textContent=next?next[0]:'—';
+document.getElementById('nextName').textContent=next?next[1]:'今日人力已全數到班';
+
+const tasks=[
+  {time:'08:30',icon:'📋',title:'開店 Checklist',sub:'晨會、照片、設備確認',status:'進行中',tone:'yellow',href:'checklist.html?type=open'},
+  {time:'11:00',icon:'⚠️',title:'營運事件',sub:'2 件尚未結案',status:'2 件',tone:'red',href:'events.html'},
+  {time:'16:00',icon:'📦',title:'今日訂貨',sub:'請於 16:00 前完成',status:'待處理',tone:'red',href:'orders.html'},
+  {time:'21:00',icon:'🌙',title:'關店 Checklist',sub:'結帳、清潔、設備與照片',status:'未開始',tone:'yellow',href:'checklist.html?type=close'},
+  {time:'22:00',icon:'💰',title:'今日獎金',sub:'輸入獎金池並核對時數',status:'未設定',tone:'yellow',href:'bonus.html'}
+].sort((a,b)=>toMinutes(a.time)-toMinutes(b.time));
+
+document.getElementById('todoList').innerHTML=tasks.map(t=>`<a class="todo" href="${t.href}"><div class="todo-time">${t.time}</div><div class="todo-left"><div class="todo-icon">${t.icon}</div><div><div class="todo-title">${t.title}</div><div class="todo-sub">${t.sub}</div></div></div><span class="pill ${t.tone}">${t.status}</span></a>`).join('');
+
+let priority='完成開店 Checklist';
+if(nowMinutes>=11*60&&nowMinutes<16*60) priority='先處理未結案事件';
+if(nowMinutes>=15*60+30&&nowMinutes<21*60) priority='16:00 前完成訂貨';
+if(nowMinutes>=21*60&&nowMinutes<22*60) priority='開始關店 Checklist';
+if(nowMinutes>=22*60) priority='完成今日獎金';
+document.getElementById('priorityText').textContent=priority;
+
+const alerts=[];
+if(nowMinutes>=9*60) alerts.push({icon:'⚠️',title:'開店 Checklist 尚未完成',text:'請確認晨會、照片及設備項目。'});
+if(nowMinutes>=14*60) alerts.push({icon:'⏰',title:'訂貨截止時間接近',text:'請於 16:00 前完成今日訂貨。'});
+alerts.push({icon:'⚠️',title:'2 件營運事件尚未結案',text:'請確認處理進度與責任人。'});
+if(nowMinutes>=22*60) alerts.push({icon:'💰',title:'今日獎金尚未建立',text:'請輸入獎金池並確認遲到人員。'});
+const alertList=document.getElementById('alertList');
+if(alerts.length){alertList.innerHTML=alerts.map(a=>`<div class="alert-item"><div>${a.icon}</div><div><strong>${a.title}</strong>${a.text}</div></div>`).join('');}
+else{alertList.innerHTML='<div class="alert-item alert-ok"><div>✅</div><div><strong>今日無異常</strong>目前沒有需要立即處理的警示。</div></div>';}
+document.getElementById('alertCount').textContent=alerts.length?alerts.length+' 項':'正常';
+
+let timer;function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>el.classList.remove('show'),1800)}
+</script>
+</body>
+</html>
