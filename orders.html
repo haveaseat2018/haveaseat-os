@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#155eef">
+  <title>到貨單據 v1.0 Final</title>
+  <style>
+    :root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5eaf2;--primary:#155eef;--primary-soft:#eaf1ff;--green:#168a52;--green-soft:#eaf8f0;--yellow:#b7791f;--yellow-soft:#fff7e6;--red:#d64545;--red-soft:#fff0f0;--shadow:0 12px 30px rgba(28,51,84,.10)}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}button,input,textarea,select{font:inherit}a{text-decoration:none;color:inherit}.app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:96px}
+    .hero{padding:12px 16px 18px;color:#fff;background:linear-gradient(145deg,#0f4fcb,#155eef 58%,#4a87ff);border-radius:0 0 28px 28px;box-shadow:0 14px 30px rgba(21,94,239,.23)}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px}.back{display:inline-flex;align-items:center;gap:7px;color:#fff;font-size:13px;background:rgba(255,255,255,.14);padding:9px 11px;border-radius:12px}.icon{width:40px;height:40px;border:0;border-radius:13px;background:rgba(255,255,255,.16);color:#fff}.store-row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:12px}.store-name{margin:0;font-size:22px}.meta{margin-top:7px;font-size:12px;opacity:.88}.store-select{appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:8px 30px 8px 10px;font-size:12px;font-weight:800}.store-select option{color:#172033;background:#fff}
+    main{padding:16px 14px 0}.section-title{display:flex;justify-content:space-between;align-items:center;margin:0 4px 10px}.section-title h2{margin:0;font-size:18px}.section-title span{font-size:11px;color:var(--muted)}.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+    .summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.analysis-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.analysis-note{margin-top:10px;padding:10px 12px;border-radius:13px;background:var(--yellow-soft);color:#805b19;font-size:11px;line-height:1.5}.ratio.good{color:var(--green)}.ratio.warn{color:var(--yellow)}.ratio.bad{color:var(--red)}.summary-card{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}.summary-card small{display:block;font-size:10px;color:var(--muted)}.summary-card strong{display:block;margin-top:5px;font-size:20px}.summary-card.ok{background:var(--green-soft);border-color:#cfeadd}
+    .week-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.filter-tools{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}.month-input{width:100%;border:1px solid var(--line);border-radius:13px;background:#fafbfd;padding:10px 12px;color:var(--text);font-weight:800}.tool-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool-btn{border:0;border-radius:13px;min-height:44px;background:#eef2f7;color:#445066;font-weight:900}.tool-btn.primary{background:var(--primary-soft);color:var(--primary)}.tab{border:1px solid var(--line);background:#fff;color:var(--muted);padding:11px;border-radius:13px;font-weight:850}.tab.active{color:var(--primary);border-color:#bfd0ff;background:var(--primary-soft)}
+    .category-list{display:grid;gap:8px}.category-row{padding:10px 12px;border-radius:13px;background:#fafbfd;border:1px solid var(--line)}.category-line{display:flex;justify-content:space-between;gap:10px;align-items:center}.category-row strong{font-size:13px}.category-row span{font-size:12px;color:var(--muted)}.bar{height:5px;margin-top:7px;border-radius:999px;background:#e7ecf4;overflow:hidden}.bar i{display:block;height:100%;border-radius:999px;background:var(--primary)}.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.compare-card{padding:11px;border:1px solid var(--line);border-radius:14px;background:#fafbfd}.compare-card small{display:block;color:var(--muted);font-size:10px}.compare-card strong{display:block;margin-top:5px;font-size:15px}.delta.up{color:var(--red)}.delta.down{color:var(--green)}.delta.flat{color:var(--muted)}
+    .list-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.list-tools .input{margin:0}.health-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:13px;background:#fafbfd;border:1px solid var(--line);font-size:12px}.health-row strong{font-size:14px}.health-row.bad{background:var(--red-soft);border-color:#ffd5d5;color:var(--red)}.receipt-list{display:grid;gap:10px}.receipt-card{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}.receipt-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.receipt-title{font-size:15px;font-weight:900}.receipt-meta{margin-top:5px;font-size:11px;color:var(--muted);line-height:1.55}.amount{font-size:18px;font-weight:900;color:var(--primary);white-space:nowrap}.thumb{display:block;width:100%;max-height:240px;object-fit:cover;border-radius:13px;margin-top:10px;border:1px solid var(--line);background:#eef2f7;cursor:zoom-in}.receipt-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.small-btn{border:0;border-radius:11px;min-height:38px;font-size:11px;font-weight:850}.small-btn.secondary{background:#eef2f7;color:#445066}.small-btn.danger{background:var(--red-soft);color:var(--red)}.empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:13px}
+    .field{display:grid;gap:6px;margin-top:12px}.field label{font-size:12px;font-weight:800}.input,textarea,select{width:100%;border:1px solid var(--line);border-radius:13px;background:#fafbfd;padding:11px 12px;color:var(--text)}textarea{min-height:84px;resize:vertical}.category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.category-btn{border:1px solid var(--line);background:#fff;color:var(--muted);padding:10px 6px;border-radius:12px;font-size:11px;font-weight:850}.category-btn.active{color:var(--primary);border-color:#bfd0ff;background:var(--primary-soft)}.category-help{margin-top:8px;padding:9px 10px;border-radius:12px;background:#f6f8fb;color:var(--muted);font-size:11px;line-height:1.5}
+    .photo-upload{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;background:var(--primary);color:#fff;font-weight:900;cursor:pointer}.photo-upload input{display:none}.photo-preview{display:none;width:100%;max-height:260px;object-fit:cover;border-radius:14px;margin-top:10px;border:1px solid var(--line)}.photo-preview.show{display:block}
+    .form-actions{display:grid;grid-template-columns:1fr 1.2fr;gap:10px;margin-top:14px}.btn{border:0;border-radius:14px;min-height:48px;font-weight:900}.btn.secondary{background:#eef2f7;color:#445066}.btn.primary{background:var(--primary);color:#fff}
+    .fab{position:fixed;right:max(18px,calc((100vw - 720px)/2 + 18px));bottom:calc(82px + env(safe-area-inset-bottom));width:58px;height:58px;border:0;border-radius:50%;background:var(--primary);color:#fff;font-size:28px;box-shadow:0 14px 30px rgba(21,94,239,.35)}
+    .modal{position:fixed;inset:0;z-index:50;background:rgba(8,13,24,.72);display:none;align-items:flex-end;justify-content:center}.modal.show{display:flex}.modal-card{width:min(100%,720px);max-height:92vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -18px 40px rgba(0,0,0,.22)}.modal-title{margin:0;font-size:20px}
+    .viewer{position:fixed;inset:0;z-index:70;background:rgba(8,13,24,.94);display:none;align-items:center;justify-content:center;padding:18px}.viewer.show{display:flex}.viewer img{display:block;width:100%;max-width:760px;max-height:82vh;object-fit:contain;border-radius:14px}.viewer-close{position:absolute;top:18px;right:18px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.17);color:#fff;font-size:24px}
+    nav{position:fixed;z-index:10;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}.nav{border:0;background:transparent;min-height:56px;border-radius:14px;color:#8a94a4;font-size:11px}.nav.active{color:var(--primary);background:var(--primary-soft);font-weight:800}.nav b{display:block;font-size:18px;margin-bottom:4px}.toast{position:fixed;z-index:80;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);opacity:0;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:430px){.category-grid{grid-template-columns:repeat(2,1fr)}.week-tabs{grid-template-columns:repeat(2,1fr)}.list-tools{grid-template-columns:1fr}.compare-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="top">
+      <a class="back" id="backLink" href="dashboard.html">← Dashboard</a>
+      <button class="icon" type="button" onclick="openReceiptModal()">＋</button>
+    </div>
+    <div class="store-row">
+      <div>
+        <h1 class="store-name" id="pageTitle">到貨單據</h1>
+        <div class="meta"><span id="today"></span> · 拍照、金額、類別 · v1.0</div>
+      </div>
+      <select class="store-select" id="storeSelect"></select>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-title"><h2>週統計</h2><span id="weekLabel">本週</span></div>
+    <section class="panel">
+      <div class="week-tabs">
+        <button class="tab active" id="thisWeekTab" type="button">本週</button>
+        <button class="tab" id="lastWeekTab" type="button">上週</button>
+        <button class="tab" id="monthTab" type="button">月份</button>
+        <button class="tab" id="allTab" type="button">全部</button>
+      </div>
+      <div class="filter-tools" id="monthTools" style="display:none">
+        <input class="month-input" id="monthSelect" type="month">
+        <button class="tool-btn primary" type="button" onclick="applyMonthFilter()">查看</button>
+      </div>
+      <div class="summary-grid" style="margin-top:12px">
+        <div class="summary-card ok"><small>單據張數</small><strong id="receiptCount">0</strong></div>
+        <div class="summary-card"><small>採購總額</small><strong id="weekTotal">$0</strong></div>
+      </div>
+      <div class="category-list" id="categorySummary" style="margin-top:12px"></div>
+      <div id="comparisonBlock" style="margin-top:12px">
+        <div class="receipt-meta" id="comparisonLabel" style="margin-bottom:7px">與前期比較</div>
+        <div class="compare-grid">
+          <div class="compare-card"><small>採購總額</small><strong class="delta" id="totalDelta">—</strong></div>
+          <div class="compare-card"><small>食材採購額</small><strong class="delta" id="foodDelta">—</strong></div>
+          <div class="compare-card"><small>單據張數</small><strong class="delta" id="countDelta">—</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="analysisSection">
+      <div class="section-title"><h2>採購分析</h2><span>店經理填營業額</span></div>
+      <section class="panel">
+        <div class="field" style="margin-top:0">
+          <label for="revenueInput">目前區間營業額</label>
+          <input class="input" id="revenueInput" inputmode="numeric" placeholder="例如：250000">
+        </div>
+        <div class="analysis-grid" style="margin-top:12px">
+          <div class="summary-card"><small>食材採購額</small><strong id="foodPurchaseTotal">$0</strong></div>
+          <div class="summary-card"><small>全部採購額</small><strong id="allPurchaseTotal">$0</strong></div>
+          <div class="summary-card"><small>估算食材採購率</small><strong class="ratio" id="foodPurchaseRate">—</strong></div>
+          <div class="summary-card"><small>估算全部採購率</small><strong class="ratio" id="allPurchaseRate">—</strong></div>
+        </div>
+        <div class="analysis-note">食材採購額包含生鮮、海鮮、中央廚房、甜品、飲品原料與一般食材；不包含包材、清潔用品、設備／租賃及其他。此數字是採購率估算，不是正式食材成本率。</div>
+      </section>
+    </div>
+
+    <div class="section-title"><h2>到貨單據</h2><span id="listCount">0 張</span></div>
+    <section class="panel">
+      <div class="list-tools">
+        <select class="input" id="listCategoryFilter"></select>
+        <input class="input" id="searchInput" type="search" placeholder="搜尋上傳人或備註">
+      </div>
+      <div class="receipt-list" id="receiptList"></div>
+    </section>
+
+    <div class="section-title"><h2>資料工具</h2><span>包含單據照片</span></div>
+    <section class="panel">
+      <div class="tool-row">
+        <button class="tool-btn primary" type="button" onclick="copyPeriodSummary()">複製期間摘要</button>
+        <button class="tool-btn" type="button" onclick="exportCurrentCsv()">匯出目前清單 CSV</button>
+        <button class="tool-btn" type="button" onclick="checkDataHealth()">檢查資料完整性</button>
+        <button class="tool-btn primary" type="button" onclick="exportBackup()">匯出完整備份</button>
+        <button class="tool-btn" type="button" onclick="document.getElementById('importFile').click()">匯入備份</button>
+      </div>
+      <div id="healthResult" style="margin-top:10px"></div>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+    </section>
+  </main>
+</div>
+
+<button class="fab" type="button" onclick="openReceiptModal()">＋</button>
+
+<div class="modal" id="receiptModal">
+  <div class="modal-card">
+    <h2 class="modal-title" id="modalTitle">新增到貨單據</h2>
+    <div class="field">
+      <label>單據照片</label>
+      <label class="photo-upload">📷 拍照／上傳
+        <input id="photoInput" type="file" accept="image/*" capture="environment">
+      </label>
+      <img class="photo-preview" id="photoPreview" alt="單據預覽">
+    </div>
+    <div class="field">
+      <label for="receiptDate">單據日期</label>
+      <input class="input" id="receiptDate" type="date">
+    </div>
+    <div class="field">
+      <label for="amount">單據金額</label>
+      <input class="input" id="amount" inputmode="numeric" placeholder="例如：2200">
+    </div>
+    <div class="field">
+      <label>類別</label>
+      <div class="category-grid" id="categoryGrid"></div>
+      <div class="category-help" id="categoryHelp"></div>
+    </div>
+    <div class="field">
+      <label for="uploader">上傳人</label>
+      <input class="input" id="uploader" placeholder="姓名">
+    </div>
+    <div class="field">
+      <label for="note">備註（選填）</label>
+      <textarea id="note" placeholder="例如：單據金額看不清楚、補登原因"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn secondary" type="button" onclick="closeReceiptModal()">取消</button>
+      <button class="btn primary" type="button" onclick="saveReceipt()">儲存單據</button>
+    </div>
+  </div>
+</div>
+
+<div class="viewer" id="viewer">
+  <button class="viewer-close" type="button" onclick="closeViewer()">×</button>
+  <img id="viewerImage" alt="單據放大">
+</div>
+
+<nav>
+  <button class="nav" onclick="location.href='index.html'"><b>⌂</b>首頁</button>
+  <button class="nav" onclick="location.href='dashboard.html'"><b>▦</b>Dashboard</button>
+  <button class="nav" onclick="location.href='checklist.html'"><b>✓</b>Checklist</button>
+  <button class="nav" onclick="location.href='events.html'"><b>!</b>事件</button>
+  <button class="nav active"><b>🧾</b>單據</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const RECEIPTS_KEY='store-manager-os-receipts-v1';
+const PHOTO_DB='store-manager-os-receipts-photos';
+const PHOTO_STORE='photos';
+const REVENUE_KEY='store-manager-os-receipts-revenue-v1';
+const params=new URLSearchParams(location.search);
+let storeKey=params.get('store')||'nansi';
+const stores={nansi:{name:'南西店'},beiche:{name:'北車店'}};
+if(!stores[storeKey])storeKey='nansi';
+const categories=['生鮮食材','海鮮','中央廚房','甜品原料','飲品原料','一般食材','包材耗材','清潔用品','設備／租賃','其他'];
+const foodCategories=new Set(['生鮮食材','海鮮','中央廚房','甜品原料','飲品原料','一般食材']);
+let selectedCategory='生鮮食材';
+const categoryDescriptions={
+  '生鮮食材':'蔬菜、水果、肉品、雞蛋等生鮮原料',
+  '海鮮':'魚、蝦、貝類及其他水產',
+  '中央廚房':'中央廚房配送的半成品、成品或調理品',
+  '甜品原料':'豆花、仙草凍、珍珠、杏仁豆腐、紅豆紫米粥等',
+  '飲品原料':'牛奶、氣泡水、咖啡豆、茶葉、果醬、果露、糖漿等',
+  '一般食材':'乾貨、調味料、冷凍食材及其他食品',
+  '包材耗材':'餐盒、紙杯、吸管、垃圾袋、手套等',
+  '清潔用品':'洗碗精、清潔劑、菜瓜布、抹布等',
+  '設備／租賃':'設備購買、維修、租金及相關費用',
+  '其他':'無法歸入以上類別的單據'
+};
+const legacyCategoryMap={
+  '菜':'生鮮食材',
+  '肉':'生鮮食材',
+  '魚':'海鮮',
+  '茶':'飲品原料',
+  '包材':'包材耗材'
+};
+
+const formatDate=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+const todayKey=()=>formatDate(new Date());
+
+let editingId=null;
+let editingPhotoKey=null;
+let pendingPhotoBlob=null;
+let filterMode='thisWeek';
+let selectedMonth=todayKey().slice(0,7);
+let selectedListCategory='全部';
+let searchText='';
+let objectUrls=[];
+
+function startOfWeek(offset=0){
+  const d=new Date();
+  const day=d.getDay()||7;
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()-day+1+(offset*7));
+  return d;
+}
+function endOfWeek(offset=0){
+  const d=startOfWeek(offset);
+  d.setDate(d.getDate()+6);
+  d.setHours(23,59,59,999);
+  return d;
+}
+function readRoot(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(RECEIPTS_KEY));
+    return parsed&&typeof parsed==='object'?parsed:{};
+  }catch{return {}}
+}
+function writeRoot(root){
+  root.version=10;
+  root.updatedAt=new Date().toISOString();
+  localStorage.setItem(RECEIPTS_KEY,JSON.stringify(root));
+}
+function getReceipts(){
+  const receipts=readRoot()?.stores?.[storeKey]?.receipts||[];
+  let changed=false;
+  receipts.forEach(receipt=>{
+    const mapped=legacyCategoryMap[receipt.category];
+    if(mapped&&mapped!==receipt.category){
+      receipt.category=mapped;
+      changed=true;
+    }
+  });
+  if(changed)saveReceipts(receipts);
+  return receipts;
+}
+function saveReceipts(receipts){
+  const root=readRoot();
+  root.stores??={};
+  root.stores[storeKey]??={};
+  root.stores[storeKey].receipts=receipts;
+  writeRoot(root);
+}
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const request=indexedDB.open(PHOTO_DB,1);
+    request.onupgradeneeded=()=>{
+      if(!request.result.objectStoreNames.contains(PHOTO_STORE))request.result.createObjectStore(PHOTO_STORE);
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error);
+  });
+}
+async function putPhoto(key,blob){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readwrite');
+    tx.objectStore(PHOTO_STORE).put(blob,key);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function getPhoto(key){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readonly');
+    const request=tx.objectStore(PHOTO_STORE).get(key);
+    request.onsuccess=()=>{db.close();resolve(request.result||null)};
+    request.onerror=()=>{db.close();reject(request.error)};
+  });
+}
+async function deletePhoto(key){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readwrite');
+    tx.objectStore(PHOTO_STORE).delete(key);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+
+async function getAllPhotoEntries(){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readonly');
+    const store=tx.objectStore(PHOTO_STORE);
+    const keys=store.getAllKeys();
+    const values=store.getAll();
+    tx.oncomplete=()=>{
+      const result=(keys.result||[]).map((key,index)=>({key:String(key),blob:values.result[index]}));
+      db.close();resolve(result);
+    };
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function clearPhotoStore(){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readwrite');
+    tx.objectStore(PHOTO_STORE).clear();
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+function blobToDataUrl(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=reject;
+    reader.readAsDataURL(blob);
+  });
+}
+async function dataUrlToBlob(dataUrl){
+  return await (await fetch(dataUrl)).blob();
+}
+
+async function compressImage(file){
+  if(!file.type.startsWith('image/'))throw new Error('NOT_IMAGE');
+  const source=await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+  const image=await new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=source;
+  });
+  const maxSide=1280;
+  const scale=Math.min(1,maxSide/Math.max(image.width,image.height));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(image.width*scale));
+  canvas.height=Math.max(1,Math.round(image.height*scale));
+  canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
+  const dataUrl=canvas.toDataURL('image/jpeg',.75);
+  return await (await fetch(dataUrl)).blob();
+}
+function escapeHtml(value=''){
+  return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function parseAmount(value){
+  const n=Number(String(value||'').replace(/[^\d.-]/g,''));
+  return Number.isFinite(n)?Math.round(n):0;
+}
+function money(value){return '$'+Number(value||0).toLocaleString('zh-TW')}
+function currentPeriodKey(){
+  if(filterMode==='thisWeek')return `week:${formatDate(startOfWeek(0))}`;
+  if(filterMode==='lastWeek')return `week:${formatDate(startOfWeek(-1))}`;
+  if(filterMode==='month')return `month:${selectedMonth}`;
+  return '';
+}
+function readRevenueMap(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(REVENUE_KEY));
+    return parsed&&typeof parsed==='object'?parsed:{};
+  }catch{return {}}
+}
+function saveCurrentRevenue(){
+  const periodKey=currentPeriodKey();
+  if(!periodKey)return;
+  const map=readRevenueMap();
+  const amount=parseAmount(document.getElementById('revenueInput').value);
+  if(amount)map[`${storeKey}|${periodKey}`]=amount;
+  else delete map[`${storeKey}|${periodKey}`];
+  localStorage.setItem(REVENUE_KEY,JSON.stringify(map));
+  renderAnalysis(filteredReceipts());
+}
+function rateText(numerator,revenue){
+  if(!revenue)return '—';
+  return `${(numerator/revenue*100).toFixed(1)}%`;
+}
+function applyRateClass(element,ratio){
+  element.classList.remove('good','warn','bad');
+  if(!Number.isFinite(ratio))return;
+  if(ratio<0.30)element.classList.add('good');
+  else if(ratio<0.40)element.classList.add('warn');
+  else element.classList.add('bad');
+}
+function renderAnalysis(receipts){
+  const section=document.getElementById('analysisSection');
+  const supported=filterMode!=='all';
+  section.style.display=supported?'block':'none';
+  if(!supported)return;
+  const periodKey=currentPeriodKey();
+  const revenue=readRevenueMap()[`${storeKey}|${periodKey}`]||0;
+  const allTotal=receipts.reduce((sum,r)=>sum+Number(r.amount||0),0);
+  const foodTotal=receipts.reduce((sum,r)=>sum+(foodCategories.has(r.category)?Number(r.amount||0):0),0);
+  document.getElementById('revenueInput').value=revenue||'';
+  document.getElementById('foodPurchaseTotal').textContent=money(foodTotal);
+  document.getElementById('allPurchaseTotal').textContent=money(allTotal);
+  const foodRate=document.getElementById('foodPurchaseRate');
+  const allRate=document.getElementById('allPurchaseRate');
+  foodRate.textContent=rateText(foodTotal,revenue);
+  allRate.textContent=rateText(allTotal,revenue);
+  applyRateClass(foodRate,revenue?foodTotal/revenue:NaN);
+  applyRateClass(allRate,revenue?allTotal/revenue:NaN);
+}
+
+
+
+function visibleReceipts(){
+  return filteredReceipts().filter(receipt=>{
+    const categoryOk=selectedListCategory==='全部'||receipt.category===selectedListCategory;
+    const haystack=`${receipt.uploader||''} ${receipt.note||''}`.toLowerCase();
+    const searchOk=!searchText||haystack.includes(searchText.toLowerCase());
+    return categoryOk&&searchOk;
+  });
+}
+function csvEscape(value){
+  const text=String(value??'');
+  return /[",\n]/.test(text)?`"${text.replace(/"/g,'""')}"`:text;
+}
+function currentRangeLabel(){
+  return filterMode==='thisWeek'?'本週':filterMode==='lastWeek'?'上週':filterMode==='month'?selectedMonth:'全部';
+}
+function previousPeriodReceipts(){
+  const receipts=getReceipts();
+  if(filterMode==='thisWeek'||filterMode==='lastWeek'){
+    const currentOffset=filterMode==='lastWeek'?-1:0;
+    const previousOffset=currentOffset-1;
+    const start=startOfWeek(previousOffset).getTime();
+    const end=endOfWeek(previousOffset).getTime();
+    return receipts.filter(r=>{
+      const time=new Date((r.receiptDate||r.createdAt.slice(0,10))+'T12:00:00').getTime();
+      return time>=start&&time<=end;
+    });
+  }
+  if(filterMode==='month'){
+    const [year,month]=selectedMonth.split('-').map(Number);
+    const previous=new Date(year,month-2,1);
+    const previousKey=`${previous.getFullYear()}-${String(previous.getMonth()+1).padStart(2,'0')}`;
+    return receipts.filter(r=>(r.receiptDate||r.createdAt.slice(0,10)).slice(0,7)===previousKey);
+  }
+  return [];
+}
+function deltaText(current,previous,isMoney=false){
+  if(!previous&&current)return isMoney?`新增 ${money(current)}`:`新增 ${current}`;
+  if(!previous&&!current)return '—';
+  const diff=current-previous;
+  const pct=previous?Math.abs(diff/previous*100):0;
+  const sign=diff>0?'↑':diff<0?'↓':'—';
+  const value=isMoney?money(Math.abs(diff)):Math.abs(diff).toLocaleString('zh-TW');
+  return diff===0?'持平':`${sign} ${value}（${pct.toFixed(1)}%）`;
+}
+function setDelta(element,current,previous,isMoney=false){
+  const diff=current-previous;
+  element.textContent=deltaText(current,previous,isMoney);
+  element.classList.remove('up','down','flat');
+  element.classList.add(diff>0?'up':diff<0?'down':'flat');
+}
+function renderComparison(currentReceipts){
+  const block=document.getElementById('comparisonBlock');
+  if(filterMode==='all'){
+    block.style.display='none';
+    return;
+  }
+  block.style.display='block';
+  const previous=previousPeriodReceipts();
+  const currentTotal=currentReceipts.reduce((sum,r)=>sum+Number(r.amount||0),0);
+  const previousTotal=previous.reduce((sum,r)=>sum+Number(r.amount||0),0);
+  const currentFood=currentReceipts.reduce((sum,r)=>sum+(foodCategories.has(r.category)?Number(r.amount||0):0),0);
+  const previousFood=previous.reduce((sum,r)=>sum+(foodCategories.has(r.category)?Number(r.amount||0):0),0);
+  document.getElementById('comparisonLabel').textContent=filterMode==='month'?'與上個月比較':'與前一週比較';
+  setDelta(document.getElementById('totalDelta'),currentTotal,previousTotal,true);
+  setDelta(document.getElementById('foodDelta'),currentFood,previousFood,true);
+  setDelta(document.getElementById('countDelta'),currentReceipts.length,previous.length,false);
+}
+async function copyPeriodSummary(){
+  const receipts=filteredReceipts();
+  const total=receipts.reduce((sum,r)=>sum+Number(r.amount||0),0);
+  const foodTotal=receipts.reduce((sum,r)=>sum+(foodCategories.has(r.category)?Number(r.amount||0):0),0);
+  const revenue=currentPeriodKey()?readRevenueMap()[`${storeKey}|${currentPeriodKey()}`]||0:0;
+  const categoryTotals={};
+  receipts.forEach(r=>categoryTotals[r.category]=(categoryTotals[r.category]||0)+Number(r.amount||0));
+  const lines=[
+    `【${stores[storeKey].name} 到貨單據｜${currentRangeLabel()}】`,
+    `單據張數：${receipts.length} 張`,
+    `採購總額：${money(total)}`,
+    `食材採購額：${money(foodTotal)}`
+  ];
+  if(revenue){
+    lines.push(`營業額：${money(revenue)}`);
+    lines.push(`估算食材採購率：${rateText(foodTotal,revenue)}`);
+    lines.push(`估算全部採購率：${rateText(total,revenue)}`);
+  }
+  const entries=Object.entries(categoryTotals).sort((a,b)=>b[1]-a[1]);
+  if(entries.length){
+    lines.push('分類：');
+    entries.forEach(([category,amount])=>lines.push(`・${category} ${money(amount)}`));
+  }
+  try{
+    await navigator.clipboard.writeText(lines.join('\n'));
+    toast('期間摘要已複製');
+  }catch{
+    const area=document.createElement('textarea');
+    area.value=lines.join('\n');
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+    toast('期間摘要已複製');
+  }
+}
+
+function exportCurrentCsv(){
+  const receipts=visibleReceipts().sort((a,b)=>String(b.receiptDate||'').localeCompare(String(a.receiptDate||'')));
+  const rows=[['店別','單據日期','類別','金額','上傳人','上傳時間','備註']];
+  receipts.forEach(r=>rows.push([
+    stores[storeKey].name,
+    r.receiptDate||r.createdAt.slice(0,10),
+    r.category,
+    r.amount,
+    r.uploader||'',
+    r.timeText||'',
+    r.note||''
+  ]));
+  const csv='\ufeff'+rows.map(row=>row.map(csvEscape).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;
+  link.download=`${stores[storeKey].name}-到貨單據-${currentRangeLabel()}-${todayKey()}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  toast(`已匯出 ${receipts.length} 筆`);
+}
+async function checkDataHealth(){
+  const receipts=getReceipts();
+  let missingPhotos=0;
+  let invalidAmounts=0;
+  let missingDates=0;
+  for(const receipt of receipts){
+    if(!(await getPhoto(receipt.photoKey)))missingPhotos++;
+    if(!Number(receipt.amount)||Number(receipt.amount)<=0)invalidAmounts++;
+    if(!(receipt.receiptDate||receipt.createdAt))missingDates++;
+  }
+  const problems=missingPhotos+invalidAmounts+missingDates;
+  const result=document.getElementById('healthResult');
+  result.innerHTML=`<div class="health-row ${problems?'bad':''}">
+    <span>${problems?'發現資料問題':'資料完整'}</span>
+    <strong>${problems?`${problems} 項`:'正常'}</strong>
+  </div>
+  <div class="receipt-meta" style="margin-top:7px">照片遺失 ${missingPhotos} 張 · 金額異常 ${invalidAmounts} 筆 · 日期缺漏 ${missingDates} 筆</div>`;
+}
+
+function filteredReceipts(){
+  const receipts=getReceipts();
+  if(filterMode==='all')return receipts;
+  if(filterMode==='month'){
+    return receipts.filter(r=>(r.receiptDate||r.createdAt.slice(0,10)).slice(0,7)===selectedMonth);
+  }
+  const offset=filterMode==='lastWeek'?-1:0;
+  const start=startOfWeek(offset).getTime();
+  const end=endOfWeek(offset).getTime();
+  return receipts.filter(r=>{
+    const time=new Date((r.receiptDate||r.createdAt.slice(0,10))+'T12:00:00').getTime();
+    return time>=start&&time<=end;
+  });
+}
+async function render(){
+  objectUrls.forEach(URL.revokeObjectURL);
+  objectUrls=[];
+  document.getElementById('pageTitle').textContent=`${stores[storeKey].name} 到貨單據`;
+  document.getElementById('today').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date());
+  document.getElementById('backLink').href=`dashboard.html?store=${encodeURIComponent(storeKey)}`;
+  document.getElementById('thisWeekTab').classList.toggle('active',filterMode==='thisWeek');
+  document.getElementById('lastWeekTab').classList.toggle('active',filterMode==='lastWeek');
+  document.getElementById('monthTab').classList.toggle('active',filterMode==='month');
+  document.getElementById('allTab').classList.toggle('active',filterMode==='all');
+  document.getElementById('monthTools').style.display=filterMode==='month'?'grid':'none';
+  document.getElementById('monthSelect').value=selectedMonth;
+  document.getElementById('weekLabel').textContent=filterMode==='thisWeek'?'本週':filterMode==='lastWeek'?'上週':filterMode==='month'?selectedMonth:'全部';
+
+  const periodReceipts=filteredReceipts().sort((a,b)=>new Date((b.receiptDate||b.createdAt.slice(0,10))+'T12:00:00')-new Date((a.receiptDate||a.createdAt.slice(0,10))+'T12:00:00')||new Date(b.createdAt)-new Date(a.createdAt));
+  const receipts=visibleReceipts().sort((a,b)=>new Date((b.receiptDate||b.createdAt.slice(0,10))+'T12:00:00')-new Date((a.receiptDate||a.createdAt.slice(0,10))+'T12:00:00')||new Date(b.createdAt)-new Date(a.createdAt));
+  const total=periodReceipts.reduce((sum,r)=>sum+Number(r.amount||0),0);
+  document.getElementById('receiptCount').textContent=periodReceipts.length;
+  document.getElementById('weekTotal').textContent=money(total);
+  document.getElementById('listCount').textContent=`${receipts.length} 張${receipts.length!==periodReceipts.length?`／共 ${periodReceipts.length} 張`:''}`;
+  renderAnalysis(periodReceipts);
+  renderComparison(periodReceipts);
+
+  const categoryTotals={};
+  periodReceipts.forEach(r=>categoryTotals[r.category]=(categoryTotals[r.category]||0)+Number(r.amount||0));
+  const categorySummary=document.getElementById('categorySummary');
+  const categoryEntries=Object.entries(categoryTotals).sort((a,b)=>b[1]-a[1]);
+  categorySummary.innerHTML=categoryEntries.length
+    ?categoryEntries.map(([category,amount])=>{
+      const percent=total?amount/total*100:0;
+      return `<div class="category-row">
+        <div class="category-line"><strong>${escapeHtml(category)}</strong><span>${money(amount)} · ${percent.toFixed(1)}%</span></div>
+        <div class="bar"><i style="width:${Math.min(100,percent)}%"></i></div>
+      </div>`;
+    }).join('')
+    : `<div class=\"empty\">${escapeHtml(currentRangeLabel())}尚無分類資料。</div>`;
+
+  const list=document.getElementById('receiptList');
+  if(!receipts.length){
+    list.innerHTML=`<div class="empty">${periodReceipts.length?'目前篩選條件沒有符合的單據。':`${escapeHtml(currentRangeLabel())}尚無到貨單據。`}</div>`;
+    return;
+  }
+  list.innerHTML=receipts.map(r=>`<div class="receipt-card">
+    <div class="receipt-head">
+      <div>
+        <div class="receipt-title">${escapeHtml(r.category)}</div>
+        <div class="receipt-meta">${escapeHtml(r.uploader)} · ${escapeHtml(r.receiptDate||r.createdAt.slice(0,10))} · ${escapeHtml(r.timeText)}${r.note?`<br>${escapeHtml(r.note)}`:''}</div>
+      </div>
+      <div class="amount">${money(r.amount)}</div>
+    </div>
+    <img class="thumb" data-photo="${escapeHtml(r.photoKey)}" alt="單據照片">
+    <div class="receipt-actions">
+      <button class="small-btn secondary" type="button" onclick="editReceipt('${r.id}')">修改</button>
+      <button class="small-btn danger" type="button" onclick="removeReceipt('${r.id}')">刪除</button>
+    </div>
+  </div>`).join('');
+
+  await Promise.all([...list.querySelectorAll('[data-photo]')].map(async img=>{
+    const blob=await getPhoto(img.dataset.photo);
+    if(!blob){img.alt='照片遺失';img.style.minHeight='120px';img.style.objectFit='contain';return}
+    const url=URL.createObjectURL(blob);
+    objectUrls.push(url);
+    img.src=url;
+    img.onclick=()=>openViewer(url);
+  }));
+}
+
+function renderCategoryButtons(){
+  const grid=document.getElementById('categoryGrid');
+  grid.innerHTML=categories.map(c=>`<button class="category-btn ${c===selectedCategory?'active':''}" type="button" data-category="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join('');
+  grid.querySelectorAll('[data-category]').forEach(btn=>btn.onclick=()=>{
+    selectedCategory=btn.dataset.category;
+    renderCategoryButtons();
+  });
+  document.getElementById('categoryHelp').textContent=categoryDescriptions[selectedCategory]||'';
+}
+function openReceiptModal(){
+  editingId=null;
+  editingPhotoKey=null;
+  pendingPhotoBlob=null;
+  selectedCategory='生鮮食材';
+  document.getElementById('modalTitle').textContent='新增到貨單據';
+  document.getElementById('receiptDate').value=todayKey();
+  document.getElementById('amount').value='';
+  document.getElementById('uploader').value=localStorage.getItem('store-manager-last-uploader')||'';
+  document.getElementById('note').value='';
+  document.getElementById('photoInput').value='';
+  document.getElementById('photoPreview').src='';
+  document.getElementById('photoPreview').classList.remove('show');
+  renderCategoryButtons();
+  document.getElementById('receiptModal').classList.add('show');
+}
+function closeReceiptModal(){
+  document.getElementById('receiptModal').classList.remove('show');
+  pendingPhotoBlob=null;
+}
+async function saveReceipt(){
+  const receiptDate=document.getElementById('receiptDate').value;
+  const amount=parseAmount(document.getElementById('amount').value);
+  const uploader=document.getElementById('uploader').value.trim();
+  if(!receiptDate)return toast('請選擇單據日期');
+  if(!amount)return toast('請填寫單據金額');
+  if(!uploader)return toast('請填寫上傳人');
+  if(!editingId&&!pendingPhotoBlob)return toast('請先拍攝單據照片');
+
+  const receipts=getReceipts();
+  const duplicate=receipts.find(r=>r.id!==editingId&&(r.receiptDate||r.createdAt.slice(0,10))===receiptDate&&Number(r.amount)===amount&&r.category===selectedCategory);
+  if(duplicate&&!confirm('已有相同日期、金額與類別的單據，可能重複上傳。仍要儲存嗎？'))return;
+  const now=new Date();
+  if(editingId){
+    const index=receipts.findIndex(r=>r.id===editingId);
+    if(index<0)return;
+    const receipt=receipts[index];
+    if(pendingPhotoBlob){
+      await putPhoto(receipt.photoKey,pendingPhotoBlob);
+    }
+    receipts[index]={
+      ...receipt,
+      receiptDate,
+      amount,
+      category:selectedCategory,
+      uploader,
+      note:document.getElementById('note').value.trim(),
+      updatedAt:now.toISOString()
+    };
+  }else{
+    const id=crypto.randomUUID?crypto.randomUUID():String(Date.now());
+    const photoKey=`${storeKey}|${id}`;
+    await putPhoto(photoKey,pendingPhotoBlob);
+    receipts.push({
+      id,photoKey,receiptDate,amount,category:selectedCategory,uploader,
+      note:document.getElementById('note').value.trim(),
+      createdAt:now.toISOString(),
+      updatedAt:now.toISOString(),
+      timeText:new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(now)
+    });
+  }
+  localStorage.setItem('store-manager-last-uploader',uploader);
+  saveReceipts(receipts);
+  closeReceiptModal();
+  toast(editingId?'單據已更新':'單據已儲存');
+  await render();
+}
+async function editReceipt(id){
+  const receipt=getReceipts().find(r=>r.id===id);
+  if(!receipt)return;
+  editingId=id;
+  editingPhotoKey=receipt.photoKey;
+  pendingPhotoBlob=null;
+  selectedCategory=receipt.category;
+  document.getElementById('modalTitle').textContent='修改到貨單據';
+  document.getElementById('receiptDate').value=receipt.receiptDate||receipt.createdAt.slice(0,10);
+  document.getElementById('amount').value=receipt.amount;
+  document.getElementById('uploader').value=receipt.uploader||'';
+  document.getElementById('note').value=receipt.note||'';
+  renderCategoryButtons();
+  const blob=await getPhoto(receipt.photoKey);
+  const preview=document.getElementById('photoPreview');
+  if(blob){
+    const url=URL.createObjectURL(blob);
+    objectUrls.push(url);
+    preview.src=url;
+    preview.classList.add('show');
+  }
+  document.getElementById('receiptModal').classList.add('show');
+}
+async function removeReceipt(id){
+  const receipts=getReceipts();
+  const receipt=receipts.find(r=>r.id===id);
+  if(!receipt)return;
+  if(!confirm(`確定刪除這張 ${receipt.category} 單據？`))return;
+  await deletePhoto(receipt.photoKey);
+  saveReceipts(receipts.filter(r=>r.id!==id));
+  toast('單據已刪除');
+  await render();
+}
+function openViewer(url){
+  document.getElementById('viewerImage').src=url;
+  document.getElementById('viewer').classList.add('show');
+}
+function closeViewer(){
+  document.getElementById('viewer').classList.remove('show');
+  document.getElementById('viewerImage').src='';
+}
+
+document.getElementById('photoInput').addEventListener('change',async e=>{
+  const file=e.target.files?.[0];
+  if(!file)return;
+  try{
+    pendingPhotoBlob=await compressImage(file);
+    const url=URL.createObjectURL(pendingPhotoBlob);
+    objectUrls.push(url);
+    const preview=document.getElementById('photoPreview');
+    preview.src=url;
+    preview.classList.add('show');
+  }catch{
+    toast('照片處理失敗，請重新拍攝');
+  }
+});
+document.getElementById('receiptModal').addEventListener('click',e=>{if(e.target.id==='receiptModal')closeReceiptModal()});
+document.getElementById('viewer').addEventListener('click',e=>{if(e.target.id==='viewer')closeViewer()});
+document.getElementById('thisWeekTab').onclick=()=>{filterMode='thisWeek';render()};
+document.getElementById('lastWeekTab').onclick=()=>{filterMode='lastWeek';render()};
+document.getElementById('monthTab').onclick=()=>{filterMode='month';render()};
+document.getElementById('allTab').onclick=()=>{filterMode='all';render()};
+function applyMonthFilter(){
+  selectedMonth=document.getElementById('monthSelect').value||todayKey().slice(0,7);
+  filterMode='month';
+  render();
+}
+
+
+const listCategoryFilter=document.getElementById('listCategoryFilter');
+listCategoryFilter.innerHTML=['全部',...categories].map(category=>`<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`).join('');
+listCategoryFilter.onchange=()=>{
+  selectedListCategory=listCategoryFilter.value;
+  render();
+};
+document.getElementById('searchInput').addEventListener('input',e=>{
+  searchText=e.target.value.trim();
+  render();
+});
+
+const storeSelect=document.getElementById('storeSelect');
+storeSelect.innerHTML=Object.entries(stores).map(([key,s])=>`<option value="${key}" ${key===storeKey?'selected':''}>${s.name}</option>`).join('');
+storeSelect.onchange=()=>{
+  const url=new URL(location.href);
+  url.searchParams.set('store',storeSelect.value);
+  location.href=url.toString();
+};
+
+
+async function exportBackup(){
+  try{
+    const entries=await getAllPhotoEntries();
+    const photos=[];
+    for(const entry of entries){
+      photos.push({key:entry.key,dataUrl:await blobToDataUrl(entry.blob)});
+    }
+    const payload={
+      app:'Store Receipts',
+      version:'1.0',
+      exportedAt:new Date().toISOString(),
+      data:readRoot(),
+      revenue:readRevenueMap(),
+      photos
+    };
+    const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement('a');
+    link.href=url;
+    link.download=`store-receipts-backup-${todayKey()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    toast('完整備份已匯出');
+  }catch(error){
+    console.error(error);
+    toast('備份匯出失敗');
+  }
+}
+async function importBackup(file){
+  try{
+    const payload=JSON.parse(await file.text());
+    if(payload?.app!=='Store Receipts'||!payload?.data||!Array.isArray(payload?.photos)){
+      throw new Error('INVALID_BACKUP');
+    }
+    if(!confirm('匯入會覆蓋目前所有單據與照片，確定繼續？'))return;
+    localStorage.setItem(RECEIPTS_KEY,JSON.stringify(payload.data));
+    localStorage.setItem(REVENUE_KEY,JSON.stringify(payload.revenue||{}));
+    await clearPhotoStore();
+    for(const photo of payload.photos){
+      if(photo?.key&&photo?.dataUrl)await putPhoto(photo.key,await dataUrlToBlob(photo.dataUrl));
+    }
+    toast('備份已匯入');
+    await render();
+  }catch(error){
+    console.error(error);
+    toast('備份格式錯誤或匯入失敗');
+  }finally{
+    document.getElementById('importFile').value='';
+  }
+}
+document.getElementById('revenueInput').addEventListener('change',saveCurrentRevenue);
+document.getElementById('revenueInput').addEventListener('blur',saveCurrentRevenue);
+
+document.getElementById('importFile').addEventListener('change',e=>{
+  const file=e.target.files?.[0];
+  if(file)importBackup(file);
+});
+
+let toastTimer;
+function toast(message){
+  const el=document.getElementById('toast');
+  el.textContent=message;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+window.addEventListener('storage',e=>{if(e.key===RECEIPTS_KEY||e.key===REVENUE_KEY)render()});
+render();
+</script>
+</body>
+</html>
