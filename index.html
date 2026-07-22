@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#155eef" />
+  <title>Store Manager OS</title>
+  <style>
+    :root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5eaf2;--primary:#155eef;--primary-soft:#eaf1ff;--green:#168a52;--green-soft:#eaf8f0;--yellow:#b7791f;--yellow-soft:#fff7e6;--shadow:0 12px 30px rgba(28,51,84,.10)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}a{text-decoration:none;color:inherit}button{font:inherit}
+    .app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:96px}.hero{padding:22px 18px 28px;color:#fff;background:linear-gradient(145deg,#0f4fcb,#155eef 58%,#4a87ff);border-radius:0 0 30px 30px;box-shadow:0 14px 30px rgba(21,94,239,.23)}
+    .top{display:flex;justify-content:space-between;gap:14px}.brand{margin:0;font-size:25px}.greeting{margin-top:8px;font-size:14px;opacity:.88}.actions{display:flex;gap:10px}.icon{width:42px;height:42px;border:0;border-radius:14px;background:rgba(255,255,255,.16);color:#fff}
+    .overview{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.overview>div{padding:14px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16)}.big{font-size:24px;font-weight:800}.small{margin-top:6px;font-size:12px;opacity:.82}
+    main{padding:18px 14px 0}.section{display:flex;justify-content:space-between;align-items:center;margin:2px 4px 12px}.section h2{margin:0;font-size:18px}.section span{font-size:12px;color:var(--muted)}
+    .store{display:block;margin-bottom:16px;padding:18px;border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}.store:active{transform:scale(.985)}.store-head{display:flex;justify-content:space-between;gap:12px}.store h3{margin:0;font-size:21px}.subtitle{margin-top:5px;font-size:13px;color:var(--muted)}
+    .badge{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:700;height:max-content}.badge.warning{background:var(--yellow-soft);color:var(--yellow)}.badge.success{background:var(--green-soft);color:var(--green)}.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+    .staff{margin-top:18px;padding:14px;border-radius:18px;background:#f8fafd;border:1px solid var(--line)}.staff-title{display:flex;justify-content:space-between;margin-bottom:10px;font-size:13px;font-weight:800}.count{padding:4px 8px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:11px}.staff-row{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:6px 0;font-size:14px}.time{color:var(--muted)}.names{font-weight:650;line-height:1.45}
+    .status-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.status{min-height:76px;padding:12px;border-radius:14px;background:#fafbfd;border:1px solid var(--line)}.label{font-size:11px;color:var(--muted);margin-bottom:7px}.value{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800}.mini{width:8px;height:8px;border-radius:50%}.green{background:#20a464}.yellow{background:#e0a028}.gray{background:#b8c0cc}.red{background:#e05454}
+    .enter{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--primary);font-size:14px;font-weight:800}.arrow{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft)}
+    nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line)}.nav{border:0;background:transparent;min-height:56px;border-radius:14px;color:#8a94a4;font-size:11px}.nav.active{color:var(--primary);background:var(--primary-soft);font-weight:800}.nav b{display:block;font-size:18px;margin-bottom:4px}
+    .toast{position:fixed;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);opacity:0;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;transition:.2s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="top">
+      <div><h1 class="brand">Store Manager OS</h1><div class="greeting"><span id="today"></span> · 早安 👋</div></div>
+      <div class="actions"><button class="icon" onclick="toast('目前沒有新的通知')">🔔</button><button class="icon" onclick="toast('設定功能後續開放')">⚙️</button></div>
+    </div>
+    <div class="overview"><div><div class="big">2</div><div class="small">營運店鋪</div></div><div><div class="big">2</div><div class="small">今日待注意項目</div></div></div>
+  </header>
+
+  <main>
+    <div class="section"><h2>今日店鋪</h2><span>點選店鋪進入 Dashboard</span></div>
+
+    <a class="store" href="dashboard.html?store=nansi">
+      <div class="store-head"><div><h3>南西店</h3><div class="subtitle">台北南西 · 今日正常營業</div></div><div class="badge warning"><span class="dot"></span>需要注意</div></div>
+      <div class="staff"><div class="staff-title"><span>今日人力</span><span class="count">5 人</span></div>
+        <div class="staff-row"><div class="time">10:00</div><div class="names">海霞<br>易達</div></div>
+        <div class="staff-row"><div class="time">11:00</div><div class="names">伊婷</div></div>
+        <div class="staff-row"><div class="time">11:30</div><div class="names">Patricia</div></div>
+        <div class="staff-row"><div class="time">12:30</div><div class="names">Tai（店長）</div></div>
+      </div>
+      <div class="status-grid">
+        <div class="status"><div class="label">開店 Checklist</div><div class="value"><span class="mini yellow"></span>進行中</div></div>
+        <div class="status"><div class="label">關店 Checklist</div><div class="value"><span class="mini gray"></span>未開始</div></div>
+        <div class="status"><div class="label">營運事件</div><div class="value"><span class="mini red"></span>2 件待處理</div></div>
+        <div class="status"><div class="label">今日獎金</div><div class="value"><span class="mini yellow"></span>尚未設定</div></div>
+      </div>
+      <div class="enter"><span>進入南西店</span><span class="arrow">→</span></div>
+    </a>
+
+    <a class="store" href="dashboard.html?store=beiche">
+      <div class="store-head"><div><h3>北車店</h3><div class="subtitle">台北車站 · 今日正常營業</div></div><div class="badge success"><span class="dot"></span>正常</div></div>
+      <div class="staff"><div class="staff-title"><span>今日人力</span><span class="count">4 人</span></div>
+        <div class="staff-row"><div class="time">10:00</div><div class="names">員工 A<br>員工 B</div></div>
+        <div class="staff-row"><div class="time">11:30</div><div class="names">員工 C</div></div>
+        <div class="staff-row"><div class="time">12:30</div><div class="names">值班主管</div></div>
+      </div>
+      <div class="status-grid">
+        <div class="status"><div class="label">開店 Checklist</div><div class="value"><span class="mini green"></span>已完成</div></div>
+        <div class="status"><div class="label">關店 Checklist</div><div class="value"><span class="mini gray"></span>未開始</div></div>
+        <div class="status"><div class="label">營運事件</div><div class="value"><span class="mini green"></span>0 件</div></div>
+        <div class="status"><div class="label">今日獎金</div><div class="value"><span class="mini green"></span>已設定</div></div>
+      </div>
+      <div class="enter"><span>進入北車店</span><span class="arrow">→</span></div>
+    </a>
+  </main>
+</div>
+
+<nav>
+  <button class="nav active" onclick="toast('目前位於首頁')"><b>⌂</b>首頁</button>
+  <button class="nav" onclick="toast('請先選擇店鋪')"><b>✓</b>Checklist</button>
+  <button class="nav" onclick="toast('請先選擇店鋪')"><b>!</b>事件</button>
+  <button class="nav" onclick="toast('請先選擇店鋪')"><b>$</b>獎金</button>
+  <button class="nav" onclick="toast('更多功能後續開放')"><b>•••</b>更多</button>
+</nav>
+<div class="toast" id="toast"></div>
+<script>
+  document.getElementById('today').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date());
+  let timer;function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>el.classList.remove('show'),1800)}
+</script>
+</body>
+</html>
