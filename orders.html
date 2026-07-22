@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#155eef">
+  <title>到貨單據 v0.1</title>
+  <style>
+    :root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5eaf2;--primary:#155eef;--primary-soft:#eaf1ff;--green:#168a52;--green-soft:#eaf8f0;--yellow:#b7791f;--yellow-soft:#fff7e6;--red:#d64545;--red-soft:#fff0f0;--shadow:0 12px 30px rgba(28,51,84,.10)}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}button,input,textarea,select{font:inherit}a{text-decoration:none;color:inherit}.app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:96px}
+    .hero{padding:12px 16px 18px;color:#fff;background:linear-gradient(145deg,#0f4fcb,#155eef 58%,#4a87ff);border-radius:0 0 28px 28px;box-shadow:0 14px 30px rgba(21,94,239,.23)}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px}.back{display:inline-flex;align-items:center;gap:7px;color:#fff;font-size:13px;background:rgba(255,255,255,.14);padding:9px 11px;border-radius:12px}.icon{width:40px;height:40px;border:0;border-radius:13px;background:rgba(255,255,255,.16);color:#fff}.store-row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:12px}.store-name{margin:0;font-size:22px}.meta{margin-top:7px;font-size:12px;opacity:.88}.store-select{appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:8px 30px 8px 10px;font-size:12px;font-weight:800}.store-select option{color:#172033;background:#fff}
+    main{padding:16px 14px 0}.section-title{display:flex;justify-content:space-between;align-items:center;margin:0 4px 10px}.section-title h2{margin:0;font-size:18px}.section-title span{font-size:11px;color:var(--muted)}.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+    .summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.summary-card{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}.summary-card small{display:block;font-size:10px;color:var(--muted)}.summary-card strong{display:block;margin-top:5px;font-size:20px}.summary-card.ok{background:var(--green-soft);border-color:#cfeadd}
+    .week-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tab{border:1px solid var(--line);background:#fff;color:var(--muted);padding:11px;border-radius:13px;font-weight:850}.tab.active{color:var(--primary);border-color:#bfd0ff;background:var(--primary-soft)}
+    .category-list{display:grid;gap:8px}.category-row{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:13px;background:#fafbfd;border:1px solid var(--line)}.category-row strong{font-size:13px}.category-row span{font-size:12px;color:var(--muted)}
+    .receipt-list{display:grid;gap:10px}.receipt-card{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}.receipt-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.receipt-title{font-size:15px;font-weight:900}.receipt-meta{margin-top:5px;font-size:11px;color:var(--muted);line-height:1.55}.amount{font-size:18px;font-weight:900;color:var(--primary);white-space:nowrap}.thumb{display:block;width:100%;max-height:240px;object-fit:cover;border-radius:13px;margin-top:10px;border:1px solid var(--line);background:#eef2f7;cursor:zoom-in}.receipt-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.small-btn{border:0;border-radius:11px;min-height:38px;font-size:11px;font-weight:850}.small-btn.secondary{background:#eef2f7;color:#445066}.small-btn.danger{background:var(--red-soft);color:var(--red)}.empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:13px}
+    .field{display:grid;gap:6px;margin-top:12px}.field label{font-size:12px;font-weight:800}.input,textarea,select{width:100%;border:1px solid var(--line);border-radius:13px;background:#fafbfd;padding:11px 12px;color:var(--text)}textarea{min-height:84px;resize:vertical}.category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.category-btn{border:1px solid var(--line);background:#fff;color:var(--muted);padding:10px 6px;border-radius:12px;font-size:11px;font-weight:850}.category-btn.active{color:var(--primary);border-color:#bfd0ff;background:var(--primary-soft)}
+    .photo-upload{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;background:var(--primary);color:#fff;font-weight:900;cursor:pointer}.photo-upload input{display:none}.photo-preview{display:none;width:100%;max-height:260px;object-fit:cover;border-radius:14px;margin-top:10px;border:1px solid var(--line)}.photo-preview.show{display:block}
+    .form-actions{display:grid;grid-template-columns:1fr 1.2fr;gap:10px;margin-top:14px}.btn{border:0;border-radius:14px;min-height:48px;font-weight:900}.btn.secondary{background:#eef2f7;color:#445066}.btn.primary{background:var(--primary);color:#fff}
+    .fab{position:fixed;right:max(18px,calc((100vw - 720px)/2 + 18px));bottom:calc(82px + env(safe-area-inset-bottom));width:58px;height:58px;border:0;border-radius:50%;background:var(--primary);color:#fff;font-size:28px;box-shadow:0 14px 30px rgba(21,94,239,.35)}
+    .modal{position:fixed;inset:0;z-index:50;background:rgba(8,13,24,.72);display:none;align-items:flex-end;justify-content:center}.modal.show{display:flex}.modal-card{width:min(100%,720px);max-height:92vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -18px 40px rgba(0,0,0,.22)}.modal-title{margin:0;font-size:20px}
+    .viewer{position:fixed;inset:0;z-index:70;background:rgba(8,13,24,.94);display:none;align-items:center;justify-content:center;padding:18px}.viewer.show{display:flex}.viewer img{display:block;width:100%;max-width:760px;max-height:82vh;object-fit:contain;border-radius:14px}.viewer-close{position:absolute;top:18px;right:18px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.17);color:#fff;font-size:24px}
+    nav{position:fixed;z-index:10;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}.nav{border:0;background:transparent;min-height:56px;border-radius:14px;color:#8a94a4;font-size:11px}.nav.active{color:var(--primary);background:var(--primary-soft);font-weight:800}.nav b{display:block;font-size:18px;margin-bottom:4px}.toast{position:fixed;z-index:80;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);opacity:0;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:430px){.category-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="top">
+      <a class="back" id="backLink" href="dashboard.html">← Dashboard</a>
+      <button class="icon" type="button" onclick="openReceiptModal()">＋</button>
+    </div>
+    <div class="store-row">
+      <div>
+        <h1 class="store-name" id="pageTitle">到貨單據</h1>
+        <div class="meta"><span id="today"></span> · 拍照、金額、類別</div>
+      </div>
+      <select class="store-select" id="storeSelect"></select>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-title"><h2>週統計</h2><span id="weekLabel">本週</span></div>
+    <section class="panel">
+      <div class="week-tabs">
+        <button class="tab active" id="thisWeekTab" type="button">本週</button>
+        <button class="tab" id="lastWeekTab" type="button">上週</button>
+      </div>
+      <div class="summary-grid" style="margin-top:12px">
+        <div class="summary-card ok"><small>單據張數</small><strong id="receiptCount">0</strong></div>
+        <div class="summary-card"><small>採購總額</small><strong id="weekTotal">$0</strong></div>
+      </div>
+      <div class="category-list" id="categorySummary" style="margin-top:12px"></div>
+    </section>
+
+    <div class="section-title"><h2>到貨單據</h2><span id="listCount">0 張</span></div>
+    <section class="panel">
+      <div class="receipt-list" id="receiptList"></div>
+    </section>
+  </main>
+</div>
+
+<button class="fab" type="button" onclick="openReceiptModal()">＋</button>
+
+<div class="modal" id="receiptModal">
+  <div class="modal-card">
+    <h2 class="modal-title" id="modalTitle">新增到貨單據</h2>
+    <div class="field">
+      <label>單據照片</label>
+      <label class="photo-upload">📷 拍照／上傳
+        <input id="photoInput" type="file" accept="image/*" capture="environment">
+      </label>
+      <img class="photo-preview" id="photoPreview" alt="單據預覽">
+    </div>
+    <div class="field">
+      <label for="amount">單據金額</label>
+      <input class="input" id="amount" inputmode="numeric" placeholder="例如：2200">
+    </div>
+    <div class="field">
+      <label>類別</label>
+      <div class="category-grid" id="categoryGrid"></div>
+    </div>
+    <div class="field">
+      <label for="uploader">上傳人</label>
+      <input class="input" id="uploader" placeholder="姓名">
+    </div>
+    <div class="field">
+      <label for="note">備註（選填）</label>
+      <textarea id="note" placeholder="例如：單據金額看不清楚、補登原因"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn secondary" type="button" onclick="closeReceiptModal()">取消</button>
+      <button class="btn primary" type="button" onclick="saveReceipt()">儲存單據</button>
+    </div>
+  </div>
+</div>
+
+<div class="viewer" id="viewer">
+  <button class="viewer-close" type="button" onclick="closeViewer()">×</button>
+  <img id="viewerImage" alt="單據放大">
+</div>
+
+<nav>
+  <button class="nav" onclick="location.href='index.html'"><b>⌂</b>首頁</button>
+  <button class="nav" onclick="location.href='dashboard.html'"><b>▦</b>Dashboard</button>
+  <button class="nav" onclick="location.href='checklist.html'"><b>✓</b>Checklist</button>
+  <button class="nav" onclick="location.href='events.html'"><b>!</b>事件</button>
+  <button class="nav active"><b>🧾</b>單據</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const RECEIPTS_KEY='store-manager-os-receipts-v1';
+const PHOTO_DB='store-manager-os-receipts-photos';
+const PHOTO_STORE='photos';
+const params=new URLSearchParams(location.search);
+let storeKey=params.get('store')||'nansi';
+const stores={nansi:{name:'南西店'},beiche:{name:'北車店'}};
+if(!stores[storeKey])storeKey='nansi';
+const categories=['菜','魚','肉','茶','一般食材','包材','清潔用品','設備／租賃','其他'];
+let selectedCategory='菜';
+let editingId=null;
+let editingPhotoKey=null;
+let pendingPhotoBlob=null;
+let weekOffset=0;
+let objectUrls=[];
+
+const formatDate=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+const todayKey=()=>formatDate(new Date());
+
+function startOfWeek(offset=0){
+  const d=new Date();
+  const day=d.getDay()||7;
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()-day+1+(offset*7));
+  return d;
+}
+function endOfWeek(offset=0){
+  const d=startOfWeek(offset);
+  d.setDate(d.getDate()+6);
+  d.setHours(23,59,59,999);
+  return d;
+}
+function readRoot(){
+  try{return JSON.parse(localStorage.getItem(RECEIPTS_KEY))||{}}catch{return {}}
+}
+function writeRoot(root){
+  root.version=1;
+  root.updatedAt=new Date().toISOString();
+  localStorage.setItem(RECEIPTS_KEY,JSON.stringify(root));
+}
+function getReceipts(){
+  return readRoot()?.stores?.[storeKey]?.receipts||[];
+}
+function saveReceipts(receipts){
+  const root=readRoot();
+  root.stores??={};
+  root.stores[storeKey]??={};
+  root.stores[storeKey].receipts=receipts;
+  writeRoot(root);
+}
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const request=indexedDB.open(PHOTO_DB,1);
+    request.onupgradeneeded=()=>{
+      if(!request.result.objectStoreNames.contains(PHOTO_STORE))request.result.createObjectStore(PHOTO_STORE);
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error);
+  });
+}
+async function putPhoto(key,blob){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readwrite');
+    tx.objectStore(PHOTO_STORE).put(blob,key);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function getPhoto(key){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readonly');
+    const request=tx.objectStore(PHOTO_STORE).get(key);
+    request.onsuccess=()=>{db.close();resolve(request.result||null)};
+    request.onerror=()=>{db.close();reject(request.error)};
+  });
+}
+async function deletePhoto(key){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readwrite');
+    tx.objectStore(PHOTO_STORE).delete(key);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function compressImage(file){
+  if(!file.type.startsWith('image/'))throw new Error('NOT_IMAGE');
+  const source=await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+  const image=await new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=source;
+  });
+  const maxSide=1280;
+  const scale=Math.min(1,maxSide/Math.max(image.width,image.height));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(image.width*scale));
+  canvas.height=Math.max(1,Math.round(image.height*scale));
+  canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
+  const dataUrl=canvas.toDataURL('image/jpeg',.75);
+  return await (await fetch(dataUrl)).blob();
+}
+function escapeHtml(value=''){
+  return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function parseAmount(value){
+  const n=Number(String(value||'').replace(/[^\d.-]/g,''));
+  return Number.isFinite(n)?Math.round(n):0;
+}
+function money(value){return '$'+Number(value||0).toLocaleString('zh-TW')}
+
+function filteredReceipts(){
+  const start=startOfWeek(weekOffset).getTime();
+  const end=endOfWeek(weekOffset).getTime();
+  return getReceipts().filter(r=>{
+    const time=new Date(r.createdAt).getTime();
+    return time>=start&&time<=end;
+  });
+}
+async function render(){
+  objectUrls.forEach(URL.revokeObjectURL);
+  objectUrls=[];
+  document.getElementById('pageTitle').textContent=`${stores[storeKey].name} 到貨單據`;
+  document.getElementById('today').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date());
+  document.getElementById('backLink').href=`dashboard.html?store=${encodeURIComponent(storeKey)}`;
+  document.getElementById('thisWeekTab').classList.toggle('active',weekOffset===0);
+  document.getElementById('lastWeekTab').classList.toggle('active',weekOffset===-1);
+  document.getElementById('weekLabel').textContent=weekOffset===0?'本週':'上週';
+
+  const receipts=filteredReceipts().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  const total=receipts.reduce((sum,r)=>sum+Number(r.amount||0),0);
+  document.getElementById('receiptCount').textContent=receipts.length;
+  document.getElementById('weekTotal').textContent=money(total);
+  document.getElementById('listCount').textContent=`${receipts.length} 張`;
+
+  const categoryTotals={};
+  receipts.forEach(r=>categoryTotals[r.category]=(categoryTotals[r.category]||0)+Number(r.amount||0));
+  const categorySummary=document.getElementById('categorySummary');
+  const categoryEntries=Object.entries(categoryTotals).sort((a,b)=>b[1]-a[1]);
+  categorySummary.innerHTML=categoryEntries.length
+    ?categoryEntries.map(([category,amount])=>`<div class="category-row"><strong>${escapeHtml(category)}</strong><span>${money(amount)}</span></div>`).join('')
+    :'<div class="empty">本週尚無分類資料。</div>';
+
+  const list=document.getElementById('receiptList');
+  if(!receipts.length){
+    list.innerHTML='<div class="empty">目前沒有到貨單據。</div>';
+    return;
+  }
+  list.innerHTML=receipts.map(r=>`<div class="receipt-card">
+    <div class="receipt-head">
+      <div>
+        <div class="receipt-title">${escapeHtml(r.category)}</div>
+        <div class="receipt-meta">${escapeHtml(r.uploader)} · ${escapeHtml(r.timeText)}${r.note?`<br>${escapeHtml(r.note)}`:''}</div>
+      </div>
+      <div class="amount">${money(r.amount)}</div>
+    </div>
+    <img class="thumb" data-photo="${escapeHtml(r.photoKey)}" alt="單據照片">
+    <div class="receipt-actions">
+      <button class="small-btn secondary" type="button" onclick="editReceipt('${r.id}')">修改</button>
+      <button class="small-btn danger" type="button" onclick="removeReceipt('${r.id}')">刪除</button>
+    </div>
+  </div>`).join('');
+
+  await Promise.all([...list.querySelectorAll('[data-photo]')].map(async img=>{
+    const blob=await getPhoto(img.dataset.photo);
+    if(!blob){img.alt='照片遺失';return}
+    const url=URL.createObjectURL(blob);
+    objectUrls.push(url);
+    img.src=url;
+    img.onclick=()=>openViewer(url);
+  }));
+}
+
+function renderCategoryButtons(){
+  const grid=document.getElementById('categoryGrid');
+  grid.innerHTML=categories.map(c=>`<button class="category-btn ${c===selectedCategory?'active':''}" type="button" data-category="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join('');
+  grid.querySelectorAll('[data-category]').forEach(btn=>btn.onclick=()=>{
+    selectedCategory=btn.dataset.category;
+    renderCategoryButtons();
+  });
+}
+function openReceiptModal(){
+  editingId=null;
+  editingPhotoKey=null;
+  pendingPhotoBlob=null;
+  selectedCategory='菜';
+  document.getElementById('modalTitle').textContent='新增到貨單據';
+  document.getElementById('amount').value='';
+  document.getElementById('uploader').value=localStorage.getItem('store-manager-last-uploader')||'';
+  document.getElementById('note').value='';
+  document.getElementById('photoInput').value='';
+  document.getElementById('photoPreview').src='';
+  document.getElementById('photoPreview').classList.remove('show');
+  renderCategoryButtons();
+  document.getElementById('receiptModal').classList.add('show');
+}
+function closeReceiptModal(){
+  document.getElementById('receiptModal').classList.remove('show');
+  pendingPhotoBlob=null;
+}
+async function saveReceipt(){
+  const amount=parseAmount(document.getElementById('amount').value);
+  const uploader=document.getElementById('uploader').value.trim();
+  if(!amount)return toast('請填寫單據金額');
+  if(!uploader)return toast('請填寫上傳人');
+  if(!editingId&&!pendingPhotoBlob)return toast('請先拍攝單據照片');
+
+  const receipts=getReceipts();
+  const now=new Date();
+  if(editingId){
+    const index=receipts.findIndex(r=>r.id===editingId);
+    if(index<0)return;
+    const receipt=receipts[index];
+    if(pendingPhotoBlob){
+      await putPhoto(receipt.photoKey,pendingPhotoBlob);
+    }
+    receipts[index]={
+      ...receipt,
+      amount,
+      category:selectedCategory,
+      uploader,
+      note:document.getElementById('note').value.trim(),
+      updatedAt:now.toISOString()
+    };
+  }else{
+    const id=crypto.randomUUID?crypto.randomUUID():String(Date.now());
+    const photoKey=`${storeKey}|${id}`;
+    await putPhoto(photoKey,pendingPhotoBlob);
+    receipts.push({
+      id,photoKey,amount,category:selectedCategory,uploader,
+      note:document.getElementById('note').value.trim(),
+      createdAt:now.toISOString(),
+      updatedAt:now.toISOString(),
+      timeText:new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(now)
+    });
+  }
+  localStorage.setItem('store-manager-last-uploader',uploader);
+  saveReceipts(receipts);
+  closeReceiptModal();
+  toast(editingId?'單據已更新':'單據已儲存');
+  await render();
+}
+async function editReceipt(id){
+  const receipt=getReceipts().find(r=>r.id===id);
+  if(!receipt)return;
+  editingId=id;
+  editingPhotoKey=receipt.photoKey;
+  pendingPhotoBlob=null;
+  selectedCategory=receipt.category;
+  document.getElementById('modalTitle').textContent='修改到貨單據';
+  document.getElementById('amount').value=receipt.amount;
+  document.getElementById('uploader').value=receipt.uploader||'';
+  document.getElementById('note').value=receipt.note||'';
+  renderCategoryButtons();
+  const blob=await getPhoto(receipt.photoKey);
+  const preview=document.getElementById('photoPreview');
+  if(blob){
+    const url=URL.createObjectURL(blob);
+    objectUrls.push(url);
+    preview.src=url;
+    preview.classList.add('show');
+  }
+  document.getElementById('receiptModal').classList.add('show');
+}
+async function removeReceipt(id){
+  const receipts=getReceipts();
+  const receipt=receipts.find(r=>r.id===id);
+  if(!receipt)return;
+  if(!confirm(`確定刪除這張 ${receipt.category} 單據？`))return;
+  await deletePhoto(receipt.photoKey);
+  saveReceipts(receipts.filter(r=>r.id!==id));
+  toast('單據已刪除');
+  await render();
+}
+function openViewer(url){
+  document.getElementById('viewerImage').src=url;
+  document.getElementById('viewer').classList.add('show');
+}
+function closeViewer(){
+  document.getElementById('viewer').classList.remove('show');
+  document.getElementById('viewerImage').src='';
+}
+
+document.getElementById('photoInput').addEventListener('change',async e=>{
+  const file=e.target.files?.[0];
+  if(!file)return;
+  try{
+    pendingPhotoBlob=await compressImage(file);
+    const url=URL.createObjectURL(pendingPhotoBlob);
+    objectUrls.push(url);
+    const preview=document.getElementById('photoPreview');
+    preview.src=url;
+    preview.classList.add('show');
+  }catch{
+    toast('照片處理失敗，請重新拍攝');
+  }
+});
+document.getElementById('receiptModal').addEventListener('click',e=>{if(e.target.id==='receiptModal')closeReceiptModal()});
+document.getElementById('viewer').addEventListener('click',e=>{if(e.target.id==='viewer')closeViewer()});
+document.getElementById('thisWeekTab').onclick=()=>{weekOffset=0;render()};
+document.getElementById('lastWeekTab').onclick=()=>{weekOffset=-1;render()};
+
+const storeSelect=document.getElementById('storeSelect');
+storeSelect.innerHTML=Object.entries(stores).map(([key,s])=>`<option value="${key}" ${key===storeKey?'selected':''}>${s.name}</option>`).join('');
+storeSelect.onchange=()=>{
+  const url=new URL(location.href);
+  url.searchParams.set('store',storeSelect.value);
+  location.href=url.toString();
+};
+
+let toastTimer;
+function toast(message){
+  const el=document.getElementById('toast');
+  el.textContent=message;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+window.addEventListener('storage',e=>{if(e.key===RECEIPTS_KEY)render()});
+render();
+</script>
+</body>
+</html>
