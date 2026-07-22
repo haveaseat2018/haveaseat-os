@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#155eef" />
+  <title>Store Manager OS v1.0</title>
+  <style>
+    :root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5eaf2;--primary:#155eef;--primary-soft:#eaf1ff;--green:#168a52;--green-soft:#eaf8f0;--yellow:#b7791f;--yellow-soft:#fff7e6;--shadow:0 12px 30px rgba(28,51,84,.10)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}a{text-decoration:none;color:inherit}button{font:inherit}
+    .app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:96px}.hero{padding:22px 18px 28px;color:#fff;background:linear-gradient(145deg,#0f4fcb,#155eef 58%,#4a87ff);border-radius:0 0 30px 30px;box-shadow:0 14px 30px rgba(21,94,239,.23)}
+    .top{display:flex;justify-content:space-between;gap:14px}.brand{margin:0;font-size:25px}.greeting{margin-top:8px;font-size:14px;opacity:.88}.actions{display:flex;gap:10px}.icon{width:42px;height:42px;border:0;border-radius:14px;background:rgba(255,255,255,.16);color:#fff}
+    .overview{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}.overview>div{padding:14px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16)}.big{font-size:24px;font-weight:800}.small{margin-top:6px;font-size:12px;opacity:.82}
+    main{padding:18px 14px 0}.section{display:flex;justify-content:space-between;align-items:center;margin:2px 4px 12px}.section h2{margin:0;font-size:18px}.section span{font-size:12px;color:var(--muted)}
+    .store{display:block;margin-bottom:16px;padding:18px;border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}.store:active{transform:scale(.985)}.store-head{display:flex;justify-content:space-between;gap:12px}.store h3{margin:0;font-size:21px}.subtitle{margin-top:5px;font-size:13px;color:var(--muted)}
+    .badge{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:700;height:max-content}.badge.warning{background:var(--yellow-soft);color:var(--yellow)}.badge.success{background:var(--green-soft);color:var(--green)}.badge.danger{background:#fff0f0;color:#d64545}.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+    .staff{margin-top:18px;padding:14px;border-radius:18px;background:#f8fafd;border:1px solid var(--line)}.summary-line{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}.summary-line:last-child{border-bottom:0}.summary-line span{color:var(--muted)}.summary-line strong{font-size:14px}.staff-title{display:flex;justify-content:space-between;margin-bottom:10px;font-size:13px;font-weight:800}.count{padding:4px 8px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:11px}.staff-row{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:6px 0;font-size:14px}.time{color:var(--muted)}.names{font-weight:650;line-height:1.45}
+    .status-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.status{min-height:76px;padding:12px;border-radius:14px;background:#fafbfd;border:1px solid var(--line)}.label{font-size:11px;color:var(--muted);margin-bottom:7px}.value{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800}.mini{width:8px;height:8px;border-radius:50%}.green{background:#20a464}.yellow{background:#e0a028}.gray{background:#b8c0cc}.red{background:#e05454}
+    .enter{display:flex;justify-content:space-between;align-items:center;margin-top:14px;color:var(--primary);font-size:14px;font-weight:800}.arrow{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft)}
+    nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line)}.nav{border:0;background:transparent;min-height:56px;border-radius:14px;color:#8a94a4;font-size:11px}.nav.active{color:var(--primary);background:var(--primary-soft);font-weight:800}.nav b{display:block;font-size:18px;margin-bottom:4px}
+    .toast{position:fixed;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);opacity:0;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;transition:.2s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="top">
+      <div><h1 class="brand">Store Manager OS</h1><div class="greeting"><span id="today"></span> · 早安 👋</div></div>
+      <div class="actions"><button class="icon" onclick="toast('目前沒有新的通知')">🔔</button><button class="icon" onclick="toast('設定功能後續開放')">⚙️</button></div>
+    </div>
+    <div class="overview"><div><div class="big" id="storeTotal">2</div><div class="small">營運店鋪</div></div><div><div class="big" id="attentionTotal">0</div><div class="small">今日待注意項目</div></div></div>
+  </header>
+
+  <main>
+    <div class="section"><h2>今日店鋪</h2><span>點選店鋪進入 Dashboard</span></div>
+    <div id="storeList"></div>
+  </main>
+</div>
+
+<nav>
+  <button class="nav active" onclick="toast('目前位於首頁')"><b>⌂</b>首頁</button>
+  <button class="nav" onclick="toast('請先選擇店鋪')"><b>✓</b>Checklist</button>
+  <button class="nav" onclick="toast('請先選擇店鋪')"><b>!</b>事件</button>
+  <button class="nav" onclick="toast('請先選擇店鋪')"><b>$</b>獎金</button>
+  <button class="nav" onclick="toast('請先選擇店鋪')"><b>🧾</b>單據</button>
+</nav>
+<div class="toast" id="toast"></div>
+<script>
+const STORE_OS_KEY='store-manager-os-v1';
+const CHECKLIST_KEY='store-manager-os-checklist-v1';
+const RECEIPTS_KEY='store-manager-os-receipts-v1';
+
+const stores={
+  nansi:{name:'南西店',subtitle:'台北南西',fallbackStaff:{scheduled:5,present:5,foh:3,boh:2}},
+  beiche:{name:'北車店',subtitle:'台北車站',fallbackStaff:{scheduled:4,present:4,foh:2,boh:2}}
+};
+
+function todayKey(){
+  const d=new Date();
+  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+}
+function safeJson(key){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(key));
+    return parsed&&typeof parsed==='object'?parsed:{};
+  }catch{return {}}
+}
+function money(value){return '$'+Number(value||0).toLocaleString('zh-TW')}
+function startOfWeek(){
+  const d=new Date();
+  const day=d.getDay()||7;
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()-day+1);
+  return d;
+}
+function getDaily(storeKey){
+  const root=safeJson(STORE_OS_KEY);
+  const source=root?.stores?.[storeKey]?.days?.[todayKey()]||{};
+  const fallback=stores[storeKey].fallbackStaff;
+  return {
+    events:Number(source?.events?.openCount||0),
+    bonus:Boolean(source?.bonus?.created),
+    staff:{
+      scheduled:Number(source?.staff?.scheduled||fallback.scheduled),
+      present:Number(source?.staff?.present||fallback.present),
+      foh:Number(source?.staff?.foh||fallback.foh),
+      boh:Number(source?.staff?.boh||fallback.boh)
+    }
+  };
+}
+function checklistStatus(storeKey){
+  const detail=safeJson(CHECKLIST_KEY)?.stores?.[storeKey]?.days?.[todayKey()]||{};
+  const records=[
+    detail?.open?.foh,
+    detail?.open?.boh,
+    detail?.close?.foh,
+    detail?.close?.boh
+  ];
+  const complete=records.filter(record=>record?.completed).length;
+  const returned=records.filter(record=>record?.reviewStatus==='returned').length;
+  const started=records.filter(record=>record?.updatedAt&&!record?.completed).length;
+  return {complete,returned,started,total:4};
+}
+function receiptSummary(storeKey){
+  const receipts=safeJson(RECEIPTS_KEY)?.stores?.[storeKey]?.receipts||[];
+  const start=startOfWeek();
+  const end=new Date(start);
+  end.setDate(end.getDate()+6);
+  end.setHours(23,59,59,999);
+  const current=receipts.filter(receipt=>{
+    const date=receipt.receiptDate||String(receipt.createdAt||'').slice(0,10);
+    const time=new Date(date+'T12:00:00').getTime();
+    return Number.isFinite(time)&&time>=start.getTime()&&time<=end.getTime();
+  });
+  return {
+    count:current.length,
+    total:current.reduce((sum,item)=>sum+Number(item.amount||0),0)
+  };
+}
+function getStoreView(storeKey){
+  const daily=getDaily(storeKey);
+  const checklist=checklistStatus(storeKey);
+  const receipts=receiptSummary(storeKey);
+  let attention=0;
+  if(checklist.returned>0)attention+=checklist.returned;
+  else if(checklist.complete<2)attention+=1;
+  if(daily.events>0)attention+=daily.events;
+  if(daily.staff.present<daily.staff.scheduled)attention+=1;
+  const status=attention>=3?'danger':attention>0?'warning':'success';
+  return {daily,checklist,receipts,attention,status};
+}
+function statusLabel(view){
+  if(view.status==='danger')return '需立即處理';
+  if(view.status==='warning')return '需要注意';
+  return '正常';
+}
+function checklistText(checklist){
+  if(checklist.returned)return `${checklist.returned} 份已退回`;
+  if(checklist.complete===checklist.total)return '全部完成';
+  if(checklist.started)return `${checklist.complete}/${checklist.total} 完成`;
+  return `${checklist.complete}/${checklist.total} 完成`;
+}
+function cardHtml(storeKey){
+  const store=stores[storeKey];
+  const view=getStoreView(storeKey);
+  const attendance=view.daily.staff.scheduled?Math.round(view.daily.staff.present/view.daily.staff.scheduled*100):0;
+  return `<a class="store" href="dashboard.html?store=${encodeURIComponent(storeKey)}">
+    <div class="store-head">
+      <div><h3>${store.name}</h3><div class="subtitle">${store.subtitle} · 今日正常營業</div></div>
+      <div class="badge ${view.status}"><span class="dot"></span>${statusLabel(view)}</div>
+    </div>
+    <div class="staff">
+      <div class="staff-title"><span>今日人力</span><span class="count">${view.daily.staff.present}/${view.daily.staff.scheduled} 人</span></div>
+      <div class="summary-line"><span>外場</span><strong>${view.daily.staff.foh} 人</strong></div>
+      <div class="summary-line"><span>內場</span><strong>${view.daily.staff.boh} 人</strong></div>
+      <div class="summary-line"><span>出勤率</span><strong>${attendance}%</strong></div>
+    </div>
+    <div class="status-grid">
+      <div class="status"><div class="label">Checklist</div><div class="value"><span class="mini ${view.checklist.complete===view.checklist.total?'green':view.checklist.returned?'red':'yellow'}"></span>${checklistText(view.checklist)}</div></div>
+      <div class="status"><div class="label">營運事件</div><div class="value"><span class="mini ${view.daily.events?'red':'green'}"></span>${view.daily.events} 件未結案</div></div>
+      <div class="status"><div class="label">本週到貨單據</div><div class="value"><span class="mini ${view.receipts.count?'green':'gray'}"></span>${view.receipts.count} 張</div></div>
+      <div class="status"><div class="label">本週採購總額</div><div class="value"><span class="mini ${view.receipts.total?'green':'gray'}"></span>${money(view.receipts.total)}</div></div>
+      <div class="status"><div class="label">今日獎金</div><div class="value"><span class="mini ${view.daily.bonus?'green':'yellow'}"></span>${view.daily.bonus?'已建立':'尚未建立'}</div></div>
+      <div class="status"><div class="label">待注意</div><div class="value"><span class="mini ${view.attention?'yellow':'green'}"></span>${view.attention} 項</div></div>
+    </div>
+    <div class="enter"><span>進入${store.name}</span><span class="arrow">→</span></div>
+  </a>`;
+}
+function render(){
+  document.getElementById('today').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date());
+  const keys=Object.keys(stores);
+  document.getElementById('storeTotal').textContent=keys.length;
+  const views=keys.map(getStoreView);
+  document.getElementById('attentionTotal').textContent=views.reduce((sum,view)=>sum+view.attention,0);
+  document.getElementById('storeList').innerHTML=keys.map(cardHtml).join('');
+}
+let timer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(timer);
+  timer=setTimeout(()=>el.classList.remove('show'),1800);
+}
+window.addEventListener('storage',event=>{
+  if([STORE_OS_KEY,CHECKLIST_KEY,RECEIPTS_KEY].includes(event.key))render();
+});
+window.addEventListener('focus',render);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+render();
+</script>
+</body>
+</html>
