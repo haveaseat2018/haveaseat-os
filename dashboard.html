@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#155eef" />
+  <title>Store Dashboard v1.0.1</title>
+  <style>
+    :root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5eaf2;--primary:#155eef;--primary-soft:#eaf1ff;--green:#168a52;--green-soft:#eaf8f0;--yellow:#b7791f;--yellow-soft:#fff7e6;--red:#d64545;--red-soft:#fff0f0;--shadow:0 12px 30px rgba(28,51,84,.10)}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}a{text-decoration:none;color:inherit}button{font:inherit}.app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:96px}
+    .hero{padding:12px 16px 14px;color:#fff;background:linear-gradient(145deg,#0f4fcb,#155eef 58%,#4a87ff);border-radius:0 0 28px 28px;box-shadow:0 14px 30px rgba(21,94,239,.23)}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px}.back{display:inline-flex;align-items:center;gap:7px;font-size:13px;background:rgba(255,255,255,.14);padding:9px 11px;border-radius:12px}.actions{display:flex;gap:8px}.icon{width:40px;height:40px;border:0;border-radius:13px;background:rgba(255,255,255,.16);color:#fff}.welcome{margin-top:10px;font-size:13px;opacity:.88}.store-name{margin:5px 0 0;font-size:22px}.meta{margin-top:7px;font-size:13px;opacity:.9}.status-strip{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.status-card{padding:12px;border-radius:15px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.16)}.status-card small{display:block;font-size:11px;opacity:.78}.status-card strong{display:block;margin-top:6px;font-size:14px;line-height:1.35}
+    main{padding:16px 14px 0}.section-title{display:flex;justify-content:space-between;align-items:center;margin:0 4px 10px}.section-title h2{margin:0;font-size:18px}.section-title span{font-size:11px;color:var(--muted)}.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+    .alert-list{display:grid;gap:9px}.alert-item{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:14px;font-size:13px;line-height:1.5;border:1px solid transparent}.alert-item strong{display:block}.alert-item.red{background:var(--red-soft);color:#8f2f2f;border-color:#f7d8d8}.alert-item.red strong{color:#7c2424}.alert-item.yellow{background:var(--yellow-soft);color:#8b5b15;border-color:#f5e1b8}.alert-item.yellow strong{color:#754b10}.alert-item.green{background:var(--green-soft);color:var(--green);border-color:#cfeadd}
+    .todo-list{display:grid;gap:9px}.todo{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fafbfd}.todo.overdue{border-color:#f2caca;background:#fffafa}.todo.next{border-color:#cddcff;background:#f7faff;box-shadow:0 5px 16px rgba(21,94,239,.08)}.todo-time{font-size:11px;font-weight:850;color:var(--primary)}.todo-main{display:flex;align-items:center;gap:10px;min-width:0}.todo-icon{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:var(--primary-soft)}.todo-title{font-size:14px;font-weight:800}.todo-sub{margin-top:3px;font-size:11px;color:var(--muted)}.pill{padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap}.pill.yellow{background:var(--yellow-soft);color:var(--yellow)}.pill.red{background:var(--red-soft);color:var(--red)}.pill.green{background:var(--green-soft);color:var(--green)}.todo-actions{display:flex;gap:8px;align-items:center}.done-btn{border:0;background:#168a52;color:#fff;padding:6px 10px;border-radius:8px;font-size:11px;cursor:pointer}
+    .staff-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.staff-total{font-size:17px;font-weight:900}.staff-total small{font-size:11px;color:var(--muted);font-weight:650;margin-left:4px}.staff-status{padding:6px 9px;border-radius:999px;background:var(--green-soft);color:var(--green);font-size:10px;font-weight:850}.staff-summary{display:grid;grid-template-columns:1.2fr .8fr;gap:10px}.staff-box{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}.staff-box h3{margin:0 0 9px;font-size:12px}.dept-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dept{padding:9px;border-radius:12px;background:#fff;border:1px solid var(--line)}.dept small{display:block;color:var(--muted);font-size:10px}.dept strong{display:block;margin-top:3px;font-size:17px}.break-text{font-size:13px;line-height:1.55;font-weight:750}.break-text span{display:block;margin-top:4px;font-size:11px;color:var(--muted);font-weight:600}.all-staff{display:inline-flex;margin-top:11px;font-size:12px;color:var(--primary);font-weight:800}
+    .feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.feature{min-height:94px;padding:13px;border-radius:16px;background:#fafbfd;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between}.feature:active{transform:scale(.985)}.feature-icon{font-size:23px}.feature-title{font-size:14px;font-weight:800}.feature-sub{font-size:10px;color:var(--muted);margin-top:3px}.notice{padding:13px;border-radius:15px;background:#fffaf0;border:1px solid #f6e3b6;font-size:13px;line-height:1.6}
+    nav{position:fixed;z-index:10;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}.nav{border:0;background:transparent;min-height:56px;border-radius:14px;color:#8a94a4;font-size:11px}.nav.active{color:var(--primary);background:var(--primary-soft);font-weight:800}.nav b{display:block;font-size:18px;margin-bottom:4px}.toast{position:fixed;z-index:30;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);opacity:0;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    .summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .summary-card{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}
+    .summary-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .summary-title{font-size:12px;font-weight:850}.summary-icon{font-size:20px}
+    .summary-value{margin-top:8px;font-size:20px;font-weight:900}
+    .summary-sub{margin-top:3px;font-size:10px;color:var(--muted);line-height:1.45}
+    .summary-card.alert{border-color:#f2caca;background:#fffafa}
+    .summary-card.warn{border-color:#f5e1b8;background:#fffaf0}
+    .summary-card.ok{border-color:#cfeadd;background:#f4fbf7}
+    .sync-note{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;margin-bottom:14px;border-radius:14px;background:#eef4ff;color:#34518a;font-size:11px}
+    .sync-note strong{color:#244273}
+
+
+    .badge-dot{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#e5484d;color:#fff;font-size:10px;font-weight:900;display:grid;place-items:center;border:2px solid #2f6fe8}
+    .icon-wrap{position:relative}
+    .status-card strong.status-open{color:#fff}.status-card strong.status-before{color:#fff5c2}.status-card strong.status-closed{color:#ffd2d2}
+    .go-btn{border:0;background:var(--primary);color:#fff;padding:6px 10px;border-radius:8px;font-size:11px;cursor:pointer;white-space:nowrap}
+    .summary-card{transition:transform .15s ease,box-shadow .15s ease}.summary-card:active{transform:scale(.985)}
+    .system-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:10px;color:var(--muted)}
+    .connection{display:inline-flex;align-items:center;gap:5px}.connection-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}.connection.offline .connection-dot{background:var(--red)}
+
+
+    .store-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+    .store-select{appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:8px 30px 8px 10px;font-size:12px;font-weight:800;background-image:linear-gradient(45deg,transparent 50%,#fff 50%),linear-gradient(135deg,#fff 50%,transparent 50%);background-position:calc(100% - 14px) 50%,calc(100% - 9px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+    .store-select option{color:#172033;background:#fff}
+    .live-clock{font-size:12px;font-weight:800;opacity:.9;white-space:nowrap}
+    .sync-note{background:#eef4ff}
+    .sync-note.error{background:#fff0f0;color:#8f2f2f}
+    .sync-note.offline{background:#fff7e6;color:#8b5b15}
+    .sync-status{display:flex;align-items:center;gap:7px}
+    .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex:none}
+    .sync-note.error .sync-dot{background:var(--red)}
+    .sync-note.offline .sync-dot{background:var(--yellow)}
+
+
+    .health-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+    .health-item{padding:9px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+    .health-item small{display:block;font-size:9px;color:var(--muted)}
+    .health-item strong{display:block;margin-top:3px;font-size:12px}
+    .health-item.ok strong{color:var(--green)}
+    .health-item.warn strong{color:var(--yellow)}
+    .health-item.error strong{color:var(--red)}
+    .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+    .tool-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+    .tool-btn{border:1px solid var(--line);background:#fff;color:var(--text);min-height:42px;border-radius:12px;font-size:11px;font-weight:800;padding:8px;cursor:pointer}
+    .tool-btn:active{transform:scale(.98)}
+    .tool-btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .tool-btn.danger{color:var(--red);background:var(--red-soft);border-color:#f2caca}
+    .data-caption{margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5}
+
+    .sync-note.saving{background:#eef4ff;color:#34518a}
+    .sync-note.conflict{background:#fff0f0;color:#8f2f2f}
+    .tool-btn[disabled],.go-btn[disabled],.icon[disabled]{opacity:.55;cursor:not-allowed}
+
+
+    @media(max-width:430px){
+      .store-row{align-items:flex-start}
+      .store-row>div:last-child{display:flex;flex-direction:column;align-items:flex-end}
+      .todo{grid-template-columns:40px minmax(0,1fr)}
+      .todo-actions{grid-column:2;justify-content:flex-start;flex-wrap:wrap}
+      .go-btn{min-height:34px}
+      .summary-sub{min-height:30px}
+    }
+
+    @media(max-width:380px){.todo{grid-template-columns:38px 1fr}.summary-grid{grid-template-columns:1fr 1fr}.todo>.pill{grid-column:2;justify-self:start}.staff-summary{grid-template-columns:1fr}.status-strip{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="top">
+      <a class="back" href="index.html">← 返回首頁</a>
+      <div class="actions"><button class="icon" type="button" onclick="refreshDashboard()" aria-label="重新整理">🔄</button><div class="icon-wrap"><button class="icon" type="button" onclick="scrollToAlerts()" aria-label="通知">🔔</button><span class="badge-dot" id="notificationBadge" hidden>0</span></div><button class="icon" type="button" onclick="toast('資料工具位於頁面下方')" aria-label="設定">⚙️</button></div>
+    </div>
+    <div class="welcome"><span id="greetingText">早安 Alan 👋</span>　今天還有 <strong id="remainingText">4</strong> 件事情等待完成</div>
+    <div class="store-row">
+      <div>
+        <h1 class="store-name" id="storeName">南西店</h1>
+        <div class="meta"><span id="today"></span> · 今日值班：<span id="managerName">Tai（店長）</span></div>
+      </div>
+      <div>
+        <select class="store-select" id="storeSelect" aria-label="切換分店"></select>
+        <div class="live-clock" id="liveClock">--:--</div>
+      </div>
+    </div>
+    <div class="status-strip">
+      <div class="status-card"><small>目前狀態</small><strong id="storeStatus">讀取中</strong></div>
+      <div class="status-card"><small>現在最優先</small><strong id="priorityText">完成開店 Checklist</strong></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-title"><h2>今日待辦</h2><span>完成後自動移除</span></div>
+    <section class="panel"><div class="todo-list" id="todoList"></div></section>
+
+    
+<div class="section-title"><h2>今日進度</h2><span id="progressText">0/0</span></div>
+<section class="panel">
+<div style="height:10px;background:#e5eaf2;border-radius:999px;overflow:hidden">
+<div id="progressBar" style="height:100%;width:0%;background:#155eef"></div>
+</div>
+</section>
+
+    <div class="section-title"><h2>營運概況</h2><span>今日狀態總覽</span></div>
+    <section class="panel">
+      <div class="summary-grid">
+        <a class="summary-card store-link" id="summaryChecklist" data-page="checklist.html" href="checklist.html">
+          <div class="summary-head"><div class="summary-title">Checklist</div><div class="summary-icon">📋</div></div>
+          <div class="summary-value" id="checklistValue">--</div>
+          <div class="summary-sub" id="checklistSub">等待資料</div>
+        </a>
+        <a class="summary-card store-link" id="summaryEvents" data-page="events.html" href="events.html">
+          <div class="summary-head"><div class="summary-title">營運事件</div><div class="summary-icon">⚠️</div></div>
+          <div class="summary-value" id="eventsValue">--</div>
+          <div class="summary-sub" id="eventsSub">等待資料</div>
+        </a>
+        <a class="summary-card store-link" id="summaryOrders" data-page="orders.html" href="orders.html">
+          <div class="summary-head"><div class="summary-title">訂貨</div><div class="summary-icon">📦</div></div>
+          <div class="summary-value" id="ordersValue">--</div>
+          <div class="summary-sub" id="ordersSub">等待資料</div>
+        </a>
+        <a class="summary-card store-link" id="summaryBonus" data-page="bonus.html" href="bonus.html">
+          <div class="summary-head"><div class="summary-title">日獎金</div><div class="summary-icon">💰</div></div>
+          <div class="summary-value" id="bonusValue">--</div>
+          <div class="summary-sub" id="bonusSub">等待資料</div>
+        </a>
+      </div>
+    </section>
+
+    <div class="sync-note" id="syncPanel">
+      <span class="sync-status"><span class="sync-dot"></span><span><strong id="syncTitle">資料已就緒</strong><br><span id="syncDetail">本機資料已就緒</span></span></span>
+      <span id="syncTime">尚未同步</span>
+    </div>
+
+<div class="section-title" id="alertsSection"><h2>今日提醒</h2><span id="alertCount">異常才顯示</span></div>
+    <section class="panel"><div class="alert-list" id="alertList"></div></section>
+
+    <div class="section-title"><h2>今日人力</h2><span id="staffCount">5 人排班</span></div>
+    <section class="panel">
+      <div class="dept-grid">
+<div class="dept"><small>👤 外場</small><strong id="fohCount">3</strong></div>
+<div class="dept"><small>👨‍🍳 內場</small><strong id="bohCount">2</strong></div>
+<div class="dept"><small>👥 總人數</small><strong id="presentCount">5</strong></div>
+<div class="dept"><small>📈 出勤率</small><strong id="attendanceRate">100%</strong></div>
+</div>
+      <a class="all-staff store-link" data-page="schedule.html" href="schedule.html">查看完整排班 →</a>
+    </section>
+
+    <div class="section-title"><h2>快速功能</h2><span>常用功能</span></div>
+    <section class="feature-grid">
+      <a class="feature store-link" data-page="checklist.html?type=open" href="checklist.html?type=open"><div class="feature-icon">📋</div><div><div class="feature-title">開店 Checklist</div><div class="feature-sub">今日開店流程</div></div></a>
+      <a class="feature store-link" data-page="checklist.html?type=close" href="checklist.html?type=close"><div class="feature-icon">🌙</div><div><div class="feature-title">關店 Checklist</div><div class="feature-sub">結帳、清潔、照片</div></div></a>
+      <a class="feature store-link" data-page="bonus.html" href="bonus.html"><div class="feature-icon">💰</div><div><div class="feature-title">日獎金</div><div class="feature-sub">時數與遲到規則</div></div></a>
+      <a class="feature store-link" data-page="orders.html" href="orders.html"><div class="feature-icon">📦</div><div><div class="feature-title">訂貨</div><div class="feature-sub">建立與追蹤訂單</div></div></a>
+    </section>
+
+    <div class="section-title" style="margin-top:16px"><h2>今日公告</h2><span>店內同步</span></div>
+    <section class="panel">
+      <div class="notice">📢 公告將由後台發布。</div>
+      <div class="system-row"><span class="connection" id="connectionState"><span class="connection-dot"></span><span id="connectionText">線上</span></span><span>Dashboard v1.0.1</span></div>
+      <div class="health-grid" aria-label="系統狀態">
+        <div class="health-item ok" id="healthStorage"><small>資料儲存</small><strong>正常</strong></div>
+        <div class="health-item ok" id="healthModules"><small>功能接口</small><strong>正常</strong></div>
+        <div class="health-item ok" id="healthSchema"><small>系統版本</small><strong>1.0</strong></div>
+      </div>
+      <div class="tool-row" aria-label="資料工具">
+        <button class="tool-btn primary" type="button" id="exportDataBtn">匯出備份</button>
+        <button class="tool-btn" type="button" id="importDataBtn">匯入備份</button>
+        <button class="tool-btn danger" type="button" id="resetTodayBtn">重設今日</button>
+      </div>
+      <div class="data-caption">備份檔包含所有分店與日期資料。重設今日只會清除目前分店的今日資料。</div>
+      <input class="sr-only" type="file" id="importFile" accept="application/json,.json">
+    </section>
+  </main>
+</div>
+
+<nav>
+  <button class="nav" onclick="location.href='index.html'"><b>⌂</b>首頁</button>
+  <button class="nav active"><b>▦</b>Dashboard</button>
+  <button class="nav" id="navChecklist"><b>✓</b>Checklist</button>
+  <button class="nav" id="navEvents"><b>!</b>事件</button>
+  <button class="nav" id="navBonus"><b>$</b>獎金</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+
+
+
+
+<script>
+const STORE_OS_KEY='store-manager-os-v1';
+const SCHEMA_VERSION=6;
+const CHANNEL_NAME='store-manager-os-sync';
+const ALLOWED_MODULES=['checklist','events','orders','bonus','staff','announcement'];
+const syncChannel='BroadcastChannel' in window?new BroadcastChannel(CHANNEL_NAME):null;
+
+const params=new URLSearchParams(location.search);
+let storeKey=params.get('store')||'nansi';
+const storeUrl=page=>page+(page.includes('?')?'&':'?')+'store='+encodeURIComponent(storeKey);
+const toMinutes=t=>{const [h,m]=String(t).split(':').map(Number);return h*60+m};
+
+const storeProfiles={
+  nansi:{name:'南西店',manager:'Tai（店長）',hours:{open:'11:00',close:'21:00'},staff:{scheduled:5,present:5,foh:3,boh:2}},
+  beiche:{name:'北車店',manager:'值班主管',hours:{open:'10:00',close:'21:00'},staff:{scheduled:4,present:4,foh:2,boh:2}}
+};
+if(!storeProfiles[storeKey])storeKey='nansi';
+let profile=storeProfiles[storeKey];
+
+function getClock(){
+  const now=new Date();
+  return {
+    now,
+    dateKey:[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-'),
+    minutes:now.getHours()*60+now.getMinutes()
+  };
+}
+function safeCount(value){
+  const n=Number(value);
+  return Number.isFinite(n)&&n>0?Math.floor(n):0;
+}
+function safeBoolean(value){return value===true}
+function safeText(value,fallback=''){
+  return typeof value==='string'&&value.trim()?value.trim():fallback;
+}
+function defaultDailyState(dateKey,targetStore=storeKey){
+  const targetProfile=storeProfiles[targetStore]||storeProfiles.nansi;
+  return {
+    schemaVersion:SCHEMA_VERSION,
+    date:dateKey,
+    checklist:{openDone:false,closeDone:false},
+    events:{openCount:0},
+    orders:{unsubmitted:0,orderedWaiting:0,arrivedUnreceived:0},
+    bonus:{created:false},
+    staff:{scheduled:targetProfile.staff.scheduled,present:targetProfile.staff.present,foh:targetProfile.staff.foh,boh:targetProfile.staff.boh},
+    announcement:'公告將由後台發布。',
+    revision:0,
+    updatedAt:null
+  };
+}
+function migrateDaily(saved,dateKey,targetStore=storeKey){
+  const base=defaultDailyState(dateKey,targetStore);
+  const source=saved&&typeof saved==='object'?saved:{};
+  return {
+    ...base,
+    ...source,
+    schemaVersion:SCHEMA_VERSION,
+    date:dateKey,
+    checklist:{
+      openDone:safeBoolean(source?.checklist?.openDone),
+      closeDone:safeBoolean(source?.checklist?.closeDone)
+    },
+    events:{openCount:safeCount(source?.events?.openCount)},
+    orders:{
+      unsubmitted:safeCount(source?.orders?.unsubmitted),
+      orderedWaiting:safeCount(source?.orders?.orderedWaiting),
+      arrivedUnreceived:safeCount(source?.orders?.arrivedUnreceived)
+    },
+    bonus:{created:safeBoolean(source?.bonus?.created)},
+    staff:{
+      scheduled:safeCount(source?.staff?.scheduled)||base.staff.scheduled,
+      present:safeCount(source?.staff?.present),
+      foh:safeCount(source?.staff?.foh),
+      boh:safeCount(source?.staff?.boh)
+    },
+    announcement:safeText(source?.announcement,base.announcement),
+    revision:safeCount(source?.revision),
+    updatedAt:source?.updatedAt||null
+  };
+}
+function validateDaily(data){
+  const errors=[];
+  if(!data||typeof data!=='object')errors.push('invalid-state');
+  if(data.staff.present>data.staff.scheduled)errors.push('present-over-scheduled');
+  if(data.staff.foh+data.staff.boh>data.staff.present)errors.push('department-over-present');
+  return {valid:errors.length===0,errors};
+}
+
+const LocalAdapter={
+  name:'localStorage',
+  readRoot(){
+    try{
+      const parsed=JSON.parse(localStorage.getItem(STORE_OS_KEY));
+      return parsed&&typeof parsed==='object'?parsed:{};
+    }catch{
+      return {};
+    }
+  },
+  writeRoot(root){
+    localStorage.setItem(STORE_OS_KEY,JSON.stringify(root));
+  },
+  health(){
+    try{
+      const key='__storeos_test__';
+      localStorage.setItem(key,'1');
+      localStorage.removeItem(key);
+      return true;
+    }catch{return false}
+  }
+};
+
+const DataService={
+  adapter:LocalAdapter,
+  loadDaily(store,dateKey){
+    const root=this.adapter.readRoot();
+    return migrateDaily(root?.stores?.[store]?.days?.[dateKey],dateKey,store);
+  },
+  saveDaily(store,dateKey,nextState,{expectedRevision=null}={}){
+    const root=this.adapter.readRoot();
+    root.schemaVersion=SCHEMA_VERSION;
+    root.updatedAt=new Date().toISOString();
+    root.stores??={};
+    root.stores[store]??={days:{}};
+    root.stores[store].days??={};
+    const current=migrateDaily(root.stores[store].days?.[dateKey],dateKey,store);
+    if(expectedRevision!==null&&current.revision!==expectedRevision){
+      const error=new Error('revision-conflict');
+      error.code='REVISION_CONFLICT';
+      error.current=current;
+      throw error;
+    }
+    const clean=migrateDaily({
+      ...nextState,
+      revision:current.revision+1,
+      updatedAt:new Date().toISOString()
+    },dateKey,store);
+    const validation=validateDaily(clean);
+    if(!validation.valid){
+      const error=new Error(validation.errors.join(','));
+      error.code='VALIDATION_FAILED';
+      error.validation=validation;
+      throw error;
+    }
+    root.stores[store].days[dateKey]=clean;
+    this.adapter.writeRoot(root);
+    return clean;
+  },
+  getRoot(){return this.adapter.readRoot()},
+  exportRoot(){
+    const root=this.getRoot();
+    return {
+      app:'Store Manager OS',
+      schemaVersion:SCHEMA_VERSION,
+      exportedAt:new Date().toISOString(),
+      data:root
+    };
+  },
+  importRoot(payload){
+    if(!payload||typeof payload!=='object'){
+      const error=new Error('備份檔不是有效資料');
+      error.code='INVALID_BACKUP';
+      throw error;
+    }
+    const incoming=payload.data&&typeof payload.data==='object'?payload.data:payload;
+    if(!incoming.stores||typeof incoming.stores!=='object'){
+      const error=new Error('備份檔缺少 stores 資料');
+      error.code='MISSING_STORES';
+      throw error;
+    }
+    for(const [store,storeData] of Object.entries(incoming.stores)){
+      if(!storeData||typeof storeData!=='object'||!storeData.days||typeof storeData.days!=='object'){
+        const error=new Error(`分店 ${store} 的日期資料格式錯誤`);
+        error.code='INVALID_STORE_DATA';
+        throw error;
+      }
+      for(const [dateKey,day] of Object.entries(storeData.days)){
+        const normalized=migrateDaily(day,dateKey,store);
+        const validation=validateDaily(normalized);
+        if(!validation.valid){
+          const error=new Error(`分店 ${store}，日期 ${dateKey} 的資料錯誤：${validation.errors.join('、')}`);
+          error.code='INVALID_DAY_DATA';
+          throw error;
+        }
+        storeData.days[dateKey]=normalized;
+      }
+    }
+    incoming.schemaVersion=SCHEMA_VERSION;
+    incoming.importedAt=new Date().toISOString();
+    this.adapter.writeRoot(incoming);
+    return true;
+  },
+  resetDaily(store,dateKey){
+    const root=this.adapter.readRoot();
+    if(root?.stores?.[store]?.days?.[dateKey]){
+      delete root.stores[store].days[dateKey];
+      root.updatedAt=new Date().toISOString();
+      this.adapter.writeRoot(root);
+    }
+    return this.loadDaily(store,dateKey);
+  }
+};
+
+let activeDateKey=getClock().dateKey;
+let state=DataService.loadDaily(storeKey,activeDateKey);
+
+const moduleRegistry=[
+  {key:'open',label:'開店 Checklist',icon:'📋',href:'checklist.html?type=open',type:'timed',time:()=>profile.hours.open,isPending:s=>!s.checklist.openDone,sub:()=> '完成今日開店流程'},
+  {key:'events',label:'營運事件',icon:'⚠️',href:'events.html',type:'module',severity:'alert',isPending:s=>s.events.openCount>0,sub:s=>`尚有 ${s.events.openCount} 件未結案`},
+  {key:'orders',label:'訂貨追蹤',icon:'📦',href:'orders.html',type:'module',severity:'warn',isPending:s=>s.orders.unsubmitted+s.orders.orderedWaiting+s.orders.arrivedUnreceived>0,sub:s=>`尚有 ${s.orders.unsubmitted+s.orders.orderedWaiting+s.orders.arrivedUnreceived} 項待處理`},
+  {key:'close',label:'關店 Checklist',icon:'🌙',href:'checklist.html?type=close',type:'timed',time:()=>profile.hours.close,isPending:s=>!s.checklist.closeDone,sub:()=> '完成今日關店流程'},
+  {key:'bonus',label:'今日獎金',icon:'💰',href:'bonus.html',type:'module',severity:'normal',isPending:s=>!s.bonus.created,sub:()=> '關店後建立今日獎金'}
+];
+
+function setSyncState(type='ok',title='資料已就緒',detail='本機資料已就緒'){
+  const panel=document.getElementById('syncPanel');
+  if(!panel)return;
+  panel.classList.remove('error','offline','saving','conflict');
+  if(type==='error')panel.classList.add('error');
+  if(type==='offline')panel.classList.add('offline');
+  if(type==='saving')panel.classList.add('saving');
+  if(type==='conflict')panel.classList.add('conflict');
+  document.getElementById('syncTitle').textContent=title;
+  document.getElementById('syncDetail').textContent=detail;
+}
+function setHealth(id,type,text){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.remove('ok','warn','error');
+  el.classList.add(type);
+  el.querySelector('strong').textContent=text;
+}
+function runHealthCheck(){
+  const storageOk=DataService.adapter.health();
+  const modulesOk=Boolean(window.StoreOS&&typeof window.StoreOS.updateModule==='function');
+  setHealth('healthStorage',storageOk?'ok':'error',storageOk?'正常':'異常');
+  setHealth('healthModules',modulesOk?'ok':'error',modulesOk?'正常':'異常');
+  setHealth('healthSchema','ok','1.0.1');
+}
+function setCardTone(id,tone){
+  const el=document.getElementById(id);
+  el.classList.remove('alert','warn','ok');
+  if(tone)el.classList.add(tone);
+}
+function buildTasks(){
+  const {minutes}=getClock();
+  return moduleRegistry
+    .filter(item=>item.isPending(state))
+    .map(item=>{
+      const time=item.type==='timed'?item.time():'--:--';
+      const overdue=item.type==='timed'&&minutes>toMinutes(time);
+      const sortRank=overdue?0:item.severity==='alert'?1:item.type==='timed'?2:item.severity==='warn'?3:4;
+      return {...item,time,sub:item.sub(state),overdue,sortRank};
+    })
+    .sort((a,b)=>a.sortRank-b.sortRank||(a.type==='timed'&&b.type==='timed'?toMinutes(a.time)-toMinutes(b.time):0));
+}
+function getStoreStatus(){
+  const {minutes}=getClock();
+  const open=toMinutes(profile.hours.open),close=toMinutes(profile.hours.close);
+  if(minutes<open)return {text:`🟡 尚未營業・${profile.hours.open} 開店`,cls:'status-before'};
+  if(minutes>=close)return {text:`🔴 已結束營業・${profile.hours.close} 關店`,cls:'status-closed'};
+  return {text:`🟢 營業中・${profile.hours.close} 關店`,cls:'status-open'};
+}
+function getGreeting(){
+  const hour=getClock().now.getHours();
+  return hour<11?'早安 Alan 👋':hour<18?'午安 Alan 👋':'晚安 Alan 👋';
+}
+function populateStoreSelect(){
+  const select=document.getElementById('storeSelect');
+  select.innerHTML=Object.entries(storeProfiles).map(([key,item])=>`<option value="${key}" ${key===storeKey?'selected':''}>${item.name}</option>`).join('');
+  select.onchange=()=>{
+    const url=new URL(location.href);
+    url.searchParams.set('store',select.value);
+    location.href=url.toString();
+  };
+}
+function renderHeader(tasks){
+  const {now}=getClock();
+  document.getElementById('storeName').textContent=profile.name;
+  document.getElementById('managerName').textContent=profile.manager;
+  document.getElementById('greetingText').textContent=getGreeting();
+  document.title=profile.name+' Dashboard v1.0.1';
+  document.getElementById('today').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(now);
+  document.getElementById('liveClock').textContent=new Intl.DateTimeFormat('zh-TW',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);
+  document.getElementById('remainingText').textContent=tasks.length;
+  document.getElementById('priorityText').textContent=tasks[0]?.label||'今日事項已完成';
+  const status=getStoreStatus(),el=document.getElementById('storeStatus');
+  el.textContent=status.text;
+  el.className=status.cls;
+}
+function renderTodos(tasks){
+  const {minutes}=getClock(),list=document.getElementById('todoList');
+  list.innerHTML=tasks.length?tasks.map((task,index)=>{
+    let tone='green',status='待處理',rowClass=index===0?'next':'';
+    if(task.type==='timed'){
+      const diff=toMinutes(task.time)-minutes;
+      if(diff<0){tone='red';status='已逾時';rowClass='overdue'}
+      else if(diff<=60){tone='yellow';status='即將開始'}
+    }else if(task.severity==='alert'){tone='red';status='需處理'}
+    else if(task.severity==='warn'){tone='yellow';status='待追蹤'}
+    return `<div class="todo ${rowClass}">
+      <div class="todo-time">${task.time}</div>
+      <a class="todo-main" href="${storeUrl(task.href)}"><div class="todo-icon">${task.icon}</div><div><div class="todo-title">${task.label}</div><div class="todo-sub">${task.sub}</div></div></a>
+      <div class="todo-actions"><button class="go-btn" type="button" data-href="${storeUrl(task.href)}">前往</button><span class="pill ${tone}">${status}</span></div>
+    </div>`;
+  }).join(''):'<div class="alert-item green"><div>✅</div><div><strong>今日待辦已完成</strong>目前沒有尚未完成的工作。</div></div>';
+  list.querySelectorAll('.go-btn').forEach(btn=>btn.onclick=()=>location.href=btn.dataset.href);
+}
+function renderProgress(tasks){
+  const total=moduleRegistry.length,done=total-tasks.length;
+  document.getElementById('progressText').textContent=`${done}/${total}`;
+  document.getElementById('progressBar').style.width=(done/total*100)+'%';
+}
+function renderSummary(){
+  const checklistDone=(state.checklist.openDone?1:0)+(state.checklist.closeDone?1:0);
+  document.getElementById('checklistValue').textContent=`${checklistDone}/2`;
+  document.getElementById('checklistSub').textContent=checklistDone===2?'今日流程已完成':`尚有 ${2-checklistDone} 份未完成`;
+  setCardTone('summaryChecklist',checklistDone===2?'ok':checklistDone===0?'alert':'warn');
+
+  document.getElementById('eventsValue').textContent=state.events.openCount;
+  document.getElementById('eventsSub').textContent=state.events.openCount?'件尚未結案':'目前無未結案事件';
+  setCardTone('summaryEvents',state.events.openCount?'alert':'ok');
+
+  const orderPending=state.orders.unsubmitted+state.orders.orderedWaiting+state.orders.arrivedUnreceived;
+  document.getElementById('ordersValue').textContent=orderPending;
+  document.getElementById('ordersSub').textContent=orderPending?`${state.orders.unsubmitted} 未訂・${state.orders.orderedWaiting} 待到貨・${state.orders.arrivedUnreceived} 待點收`:'目前無待處理品項';
+  setCardTone('summaryOrders',state.orders.unsubmitted?'alert':orderPending?'warn':'ok');
+
+  document.getElementById('bonusValue').textContent=state.bonus.created?'已建立':'未建立';
+  document.getElementById('bonusSub').textContent=state.bonus.created?'今日獎金已完成':'關店後建立';
+  setCardTone('summaryBonus',state.bonus.created?'ok':'warn');
+
+  document.getElementById('syncTime').textContent=state.updatedAt?'更新 '+new Intl.DateTimeFormat('zh-TW',{hour:'2-digit',minute:'2-digit'}).format(new Date(state.updatedAt)):'本機資料';
+}
+function buildAlerts(){
+  const {minutes}=getClock(),alerts=[];
+  if(!state.checklist.openDone&&minutes>toMinutes(profile.hours.open))alerts.push({tone:'red',icon:'🔴',title:'開店 Checklist 已逾時',text:'請確認今日開店流程是否完成。'});
+  if(state.events.openCount>0)alerts.push({tone:'red',icon:'🔴',title:`${state.events.openCount} 件營運事件尚未結案`,text:'請確認處理進度與責任人。'});
+  if(state.orders.unsubmitted>0)alerts.push({tone:'yellow',icon:'🟡',title:`${state.orders.unsubmitted} 項訂貨尚未下單`,text:'請進入訂貨功能確認品項與數量。'});
+  if(state.orders.orderedWaiting>0)alerts.push({tone:'yellow',icon:'🟡',title:`${state.orders.orderedWaiting} 項已訂、尚未到貨`,text:'請持續追蹤到貨狀態。'});
+  if(state.orders.arrivedUnreceived>0)alerts.push({tone:'yellow',icon:'🟡',title:`${state.orders.arrivedUnreceived} 項已到貨、尚未點收`,text:'請完成數量與品質確認。'});
+  if(!state.bonus.created&&minutes>=toMinutes(profile.hours.close))alerts.push({tone:'yellow',icon:'🟡',title:'今日獎金尚未建立',text:'關店後請建立獎金並核對時數。'});
+  if(state.staff.present<state.staff.scheduled)alerts.push({tone:'yellow',icon:'🟡',title:`今日少到 ${state.staff.scheduled-state.staff.present} 人`,text:'請確認遲到、請假或臨時支援安排。'});
+  return alerts;
+}
+function renderAlerts(){
+  const alerts=buildAlerts(),alertList=document.getElementById('alertList');
+  alertList.innerHTML=alerts.length?alerts.map(a=>`<div class="alert-item ${a.tone}"><div>${a.icon}</div><div><strong>${a.title}</strong>${a.text}</div></div>`).join(''):'<div class="alert-item green"><div>🟢</div><div><strong>今日無異常</strong>目前沒有需要立即處理的警示。</div></div>';
+  document.getElementById('alertCount').textContent=alerts.length?alerts.length+' 項':'正常';
+  const badge=document.getElementById('notificationBadge');
+  badge.hidden=!alerts.length;
+  badge.textContent=alerts.length>9?'9+':alerts.length;
+}
+function renderStaff(){
+  const s=state.staff;
+  document.getElementById('staffCount').textContent=s.scheduled+' 人排班';
+  document.getElementById('presentCount').textContent=s.present;
+  document.getElementById('fohCount').textContent=s.foh;
+  document.getElementById('bohCount').textContent=s.boh;
+  document.getElementById('attendanceRate').textContent=s.scheduled?Math.round(s.present/s.scheduled*100)+'%':'--';
+}
+function renderAnnouncement(){document.querySelector('.notice').firstChild.textContent='📢 '+state.announcement}
+function renderConnection({forceStatus=false}={}){
+  const row=document.getElementById('connectionState'),text=document.getElementById('connectionText');
+  row.classList.toggle('offline',!navigator.onLine);
+  text.textContent=navigator.onLine?'線上':'離線';
+  if(!navigator.onLine){
+    setSyncState('offline','目前離線','離線期間仍會保存在此裝置');
+  }else if(forceStatus){
+    setSyncState('ok','資料已就緒','本機資料已就緒');
+  }
+}
+function bindStoreLinks(){
+  document.querySelectorAll('.store-link').forEach(link=>link.href=storeUrl(link.dataset.page));
+  document.getElementById('navChecklist').onclick=()=>location.href=storeUrl('checklist.html');
+  document.getElementById('navEvents').onclick=()=>location.href=storeUrl('events.html');
+  document.getElementById('navBonus').onclick=()=>location.href=storeUrl('bonus.html');
+}
+function render(){
+  const currentDateKey=getClock().dateKey;
+  if(currentDateKey!==activeDateKey)activeDateKey=currentDateKey;
+  profile=storeProfiles[storeKey]||storeProfiles.nansi;
+  state=DataService.loadDaily(storeKey,activeDateKey);
+  const tasks=buildTasks();
+  renderHeader(tasks);renderTodos(tasks);renderProgress(tasks);renderSummary();renderAlerts();renderStaff();renderAnnouncement();renderConnection();runHealthCheck();
+}
+function refreshDashboard(){render();toast('Dashboard 已同步')}
+function scrollToAlerts(){document.getElementById('alertsSection').scrollIntoView({behavior:'smooth',block:'start'})}
+
+let saveInProgress=false;
+function setActionDisabled(disabled){
+  document.querySelectorAll('.tool-btn,.go-btn,.icon').forEach(el=>el.disabled=disabled);
+}
+function updateAndRender(next){
+  if(saveInProgress){
+    toast('資料正在儲存，請稍候');
+    return false;
+  }
+  saveInProgress=true;
+  setActionDisabled(true);
+  setSyncState('saving','資料儲存中','正在確認最新版本');
+  try{
+    state=DataService.saveDaily(
+      storeKey,
+      getClock().dateKey,
+      next,
+      {expectedRevision:state.revision}
+    );
+    syncChannel?.postMessage({type:'state-updated',storeKey,dateKey:getClock().dateKey,revision:state.revision});
+    window.dispatchEvent(new CustomEvent('storeos:updated',{detail:{storeKey,state}}));
+    render();
+    setSyncState('ok','資料已儲存','最新變更已寫入本機');
+    return true;
+  }catch(error){
+    if(error.code==='REVISION_CONFLICT'){
+      state=error.current;
+      render();
+      setSyncState('conflict','資料已被其他頁面更新','已載入最新資料，請重新操作');
+      toast('偵測到資料衝突，已載入最新版本');
+    }else{
+      setSyncState('error','資料儲存失敗',error.message||'請檢查輸入內容');
+      setHealth('healthStorage','error','異常');
+      console.error(error);
+    }
+    return false;
+  }finally{
+    saveInProgress=false;
+    setActionDisabled(false);
+  }
+}
+
+window.StoreOS={
+  appVersion:'1.0.1',
+  schemaVersion:SCHEMA_VERSION,
+  version:SCHEMA_VERSION,
+  modules:[...ALLOWED_MODULES],
+  getStoreKey:()=>storeKey,
+  getToday:()=>DataService.loadDaily(storeKey,getClock().dateKey),
+  getState:()=>DataService.getRoot(),
+  getProfile:()=>({...profile}),
+  getRevision:()=>state.revision,
+  updateToday(patch){
+    return updateAndRender(migrateDaily({...state,...(patch||{})},getClock().dateKey,storeKey));
+  },
+  updateModule(moduleName,modulePatch){
+    if(!ALLOWED_MODULES.includes(moduleName))return false;
+    if(moduleName==='announcement')return this.setAnnouncement(modulePatch);
+    const next={...state,[moduleName]:{...state[moduleName],...(modulePatch||{})}};
+    return updateAndRender(next);
+  },
+  setAnnouncement(text){
+    return updateAndRender({...state,announcement:safeText(text,'公告將由後台發布。')});
+  },
+  subscribe(callback){
+    if(typeof callback!=='function')return()=>{};
+    const handler=e=>callback(e.detail);
+    window.addEventListener('storeos:updated',handler);
+    return()=>window.removeEventListener('storeos:updated',handler);
+  },
+  exportBackup:()=>DataService.exportRoot(),
+  importBackup(payload){
+    try{
+      DataService.importRoot(payload);
+      render();
+      return true;
+    }catch(error){
+      console.error(error);
+      return false;
+    }
+  },
+  resetToday(){
+    state=DataService.resetDaily(storeKey,getClock().dateKey);
+    render();
+    return true;
+  },
+  refresh:render
+};
+
+
+window.StoreOSMetrics={
+  getDailySummary(){
+    const s=window.StoreOS.getToday();
+    const pendingOrders=s.orders.unsubmitted+s.orders.orderedWaiting+s.orders.arrivedUnreceived;
+    const checklistDone=(s.checklist.openDone?1:0)+(s.checklist.closeDone?1:0);
+    return {
+      storeKey,
+      date:s.date,
+      pendingOrders,
+      openEvents:s.events.openCount,
+      checklistDone,
+      checklistTotal:2,
+      bonusCreated:s.bonus.created,
+      scheduledStaff:s.staff.scheduled,
+      presentStaff:s.staff.present,
+      attendanceRate:s.staff.scheduled?Math.round(s.staff.present/s.staff.scheduled*100):0,
+      updatedAt:s.updatedAt
+    };
+  },
+  getAllStoresToday(){
+    return Object.keys(storeProfiles).map(key=>{
+      const s=DataService.loadDaily(key,getClock().dateKey);
+      return {
+        storeKey:key,
+        storeName:storeProfiles[key].name,
+        pendingOrders:s.orders.unsubmitted+s.orders.orderedWaiting+s.orders.arrivedUnreceived,
+        openEvents:s.events.openCount,
+        checklistDone:(s.checklist.openDone?1:0)+(s.checklist.closeDone?1:0),
+        attendance:`${s.staff.present}/${s.staff.scheduled}`
+      };
+    });
+  }
+};
+
+function downloadBackup(){
+  try{
+    const payload=DataService.exportRoot();
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`store-manager-os-backup-${getClock().dateKey}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('備份檔已匯出');
+  }catch(error){
+    console.error(error);
+    toast('備份匯出失敗');
+  }
+}
+function openImportPicker(){
+  document.getElementById('importFile').click();
+}
+async function importBackupFile(file){
+  try{
+    const text=await file.text();
+    const payload=JSON.parse(text);
+    DataService.importRoot(payload);
+    syncChannel?.postMessage({type:'state-updated',storeKey,dateKey:getClock().dateKey});
+    render();
+    setSyncState('ok','備份已匯入','所有分店資料已更新');
+    toast('備份資料已匯入');
+  }catch(error){
+    console.error(error);
+    toast(error.message||'備份檔格式錯誤');
+  }finally{
+    document.getElementById('importFile').value='';
+  }
+}
+function resetTodayData(){
+  if(!confirm(`確定要重設 ${profile.name} 今天的資料嗎？`))return;
+  state=DataService.resetDaily(storeKey,getClock().dateKey);
+  syncChannel?.postMessage({type:'state-updated',storeKey,dateKey:getClock().dateKey});
+  render();
+  setSyncState('ok','今日資料已重設',`${profile.name} 已恢復今日預設狀態`);
+  toast('今日資料已重設');
+}
+
+document.getElementById('exportDataBtn').onclick=downloadBackup;
+document.getElementById('importDataBtn').onclick=openImportPicker;
+document.getElementById('resetTodayBtn').onclick=resetTodayData;
+document.getElementById('importFile').addEventListener('change',e=>{
+  const file=e.target.files?.[0];
+  if(file)importBackupFile(file);
+});
+
+
+window.addEventListener('error',event=>{
+  console.error('StoreOS runtime error',event.error||event.message);
+  setSyncState('error','系統發生錯誤','請重新整理頁面；資料仍保存在本機');
+});
+window.addEventListener('unhandledrejection',event=>{
+  console.error('StoreOS promise error',event.reason);
+  setSyncState('error','系統發生錯誤','請重新整理頁面；資料仍保存在本機');
+});
+
+populateStoreSelect();
+bindStoreLinks();
+window.addEventListener('storage',e=>{
+  if(e.key!==STORE_OS_KEY)return;
+  const latest=DataService.loadDaily(storeKey,getClock().dateKey);
+  if(latest.revision!==state.revision)render();
+});
+syncChannel?.addEventListener('message',e=>{
+  if(e.data?.type!=='state-updated'||e.data.storeKey!==storeKey)return;
+  if(e.data.revision==null||e.data.revision!==state.revision)render();
+});
+window.addEventListener('online',()=>renderConnection({forceStatus:true}));
+window.addEventListener('offline',()=>renderConnection({forceStatus:true}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+
+let timer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');clearTimeout(timer);
+  timer=setTimeout(()=>el.classList.remove('show'),1800);
+}
+render();
+renderConnection({forceStatus:true});
+setInterval(()=>{
+  renderHeader(buildTasks());
+  if(getClock().dateKey!==activeDateKey)render();
+},1000);
+</script>
+</body>
+</html>
