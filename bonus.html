@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#155eef">
+<title>Store Bonus v0.1</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5eaf2;--primary:#155eef;--primary-soft:#eaf1ff;--green:#168a52;--green-soft:#eaf8f0;--yellow:#b7791f;--yellow-soft:#fff7e6;--red:#d64545;--red-soft:#fff0f0;--shadow:0 12px 30px rgba(28,51,84,.10)}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}button,input,select{font:inherit}a{text-decoration:none;color:inherit}.app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:96px}
+.hero{padding:12px 16px 18px;color:#fff;background:linear-gradient(145deg,#0f4fcb,#155eef 58%,#4a87ff);border-radius:0 0 28px 28px;box-shadow:0 14px 30px rgba(21,94,239,.23)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}.back{display:inline-flex;align-items:center;gap:7px;font-size:13px;background:rgba(255,255,255,.14);padding:9px 11px;border-radius:12px}.icon{width:40px;height:40px;border:0;border-radius:13px;background:rgba(255,255,255,.16);color:#fff}.store-row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:13px}.store-name{margin:0;font-size:22px}.meta{margin-top:6px;font-size:12px;opacity:.9}.store-select{appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:8px 10px;font-size:12px;font-weight:800}.store-select option{color:#172033;background:#fff}
+main{padding:16px 14px 0}.section-title{display:flex;justify-content:space-between;align-items:center;margin:0 4px 10px}.section-title h2{margin:0;font-size:18px}.section-title span{font-size:11px;color:var(--muted)}.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:6px}.field label{font-size:12px;font-weight:850}.input{width:100%;border:1px solid var(--line);border-radius:13px;background:#fafbfd;padding:11px 12px;color:var(--text)}.hint{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.55}
+.summary-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.summary{padding:12px;border-radius:15px;background:#fafbfd;border:1px solid var(--line)}.summary small{display:block;color:var(--muted);font-size:10px}.summary strong{display:block;margin-top:5px;font-size:20px}.summary.warn{background:var(--yellow-soft);border-color:#f5e1b8}.summary.ok{background:var(--green-soft);border-color:#cfeadd}
+.employee-list{display:grid;gap:9px}.employee{padding:12px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}.employee.late{background:#fff7f7;border-color:#f2caca}.employee-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.employee-name{font-size:15px;font-weight:900}.employee-shift{margin-top:3px;font-size:11px;color:var(--muted)}.money{font-size:18px;font-weight:900;color:var(--primary);white-space:nowrap}.employee-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.metric{padding:8px;border-radius:11px;background:#fff;border:1px solid var(--line)}.metric small{display:block;font-size:9px;color:var(--muted)}.metric strong{display:block;margin-top:3px;font-size:13px}.late-btn{margin-top:10px;width:100%;min-height:42px;border:1px solid #f1c8c8;border-radius:12px;background:#fff;color:var(--red);font-weight:900}.late-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:14px;min-height:48px;font-weight:900}.btn.primary{background:var(--primary);color:#fff}.btn.secondary{background:#eef2f7;color:#445066}.btn.green{background:var(--green);color:#fff}.btn:disabled{opacity:.5}.status{padding:11px 12px;border-radius:14px;background:#eef4ff;color:#34518a;font-size:12px;line-height:1.55}.status.warn{background:var(--yellow-soft);color:#815717}.status.done{background:var(--green-soft);color:var(--green)}
+.month-table{width:100%;border-collapse:collapse;font-size:12px}.month-table th,.month-table td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right}.month-table th:first-child,.month-table td:first-child{text-align:left}.empty{padding:16px;text-align:center;color:var(--muted);font-size:12px}
+nav{position:fixed;z-index:10;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}.nav{border:0;background:transparent;min-height:56px;border-radius:14px;color:#8a94a4;font-size:11px}.nav.active{color:var(--primary);background:var(--primary-soft);font-weight:800}.nav b{display:block;font-size:18px;margin-bottom:4px}
+.toast{position:fixed;z-index:30;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);opacity:0;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:430px){.form-grid{grid-template-columns:1fr}.employee-grid{grid-template-columns:1fr 1fr 1fr}.money{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="hero">
+  <div class="top">
+    <a class="back" id="backLink" href="dashboard.html">← Dashboard</a>
+    <button class="icon" type="button" onclick="refreshData()" aria-label="重新整理">↻</button>
+  </div>
+  <div class="store-row">
+    <div><h1 class="store-name" id="pageTitle">日獎金</h1><div class="meta"><span id="dateText"></span> · 依有效工時分配</div></div>
+    <select class="store-select" id="storeSelect" aria-label="切換分店"></select>
+  </div>
+</header>
+
+<main>
+  <div class="section-title"><h2>今日設定</h2><span>每天只需輸入獎金池與遲到</span></div>
+  <section class="panel">
+    <div class="form-grid">
+      <div class="field"><label for="dateInput">日期</label><input class="input" id="dateInput" type="date"></div>
+      <div class="field"><label for="poolInput">當日獎金總額</label><input class="input" id="poolInput" type="number" min="0" step="1" inputmode="numeric" placeholder="例如 5000"></div>
+    </div>
+    <div class="hint">人員、班別及有效工時會直接讀取 Schedule。遲到者的有效工時與獎金皆為 0，且不參與獎金池分配。</div>
+  </section>
+
+  <div class="section-title"><h2>計算結果</h2><span id="calcState">尚未確認</span></div>
+  <section class="panel">
+    <div class="summary-grid">
+      <div class="summary"><small>排班人數</small><strong id="scheduledCount">0</strong></div>
+      <div class="summary"><small>參與分配</small><strong id="eligibleCount">0</strong></div>
+      <div class="summary"><small>合格有效工時</small><strong id="eligibleHours">0h</strong></div>
+      <div class="summary"><small>每小時獎金</small><strong id="hourlyRate">$0</strong></div>
+      <div class="summary ok"><small>已分配金額</small><strong id="allocatedAmount">$0</strong></div>
+      <div class="summary warn"><small>分配差額</small><strong id="differenceAmount">$0</strong></div>
+    </div>
+  </section>
+
+  <div class="section-title"><h2>今日人員</h2><span>點選遲到即可排除</span></div>
+  <section class="panel"><div class="employee-list" id="employeeList"></div></section>
+
+  <div class="section-title"><h2>確認與輸出</h2><span>確認後同步 Dashboard</span></div>
+  <section class="panel">
+    <div class="status" id="statusBox">請先確認獎金池、人員與遲到狀態。</div>
+    <div class="action-grid" style="margin-top:12px">
+      <button class="btn secondary" type="button" onclick="saveDraft()">儲存草稿</button>
+      <button class="btn primary" type="button" onclick="confirmBonus()">確認今日獎金</button>
+      <button class="btn green" type="button" onclick="copyLineSummary()">複製 LINE 明細</button>
+      <button class="btn secondary" type="button" onclick="unlockBonus()">解除確認</button>
+    </div>
+  </section>
+
+  <div class="section-title"><h2>月獎金總表</h2><span id="monthLabel"></span></div>
+  <section class="panel" style="overflow:auto"><table class="month-table"><thead><tr><th>員工</th><th>總工時</th><th>有效工時</th><th>遲到</th><th>獎金</th></tr></thead><tbody id="monthBody"></tbody></table></section>
+</main>
+</div>
+
+<nav>
+<button class="nav" onclick="location.href='index.html'"><b>⌂</b>首頁</button>
+<button class="nav" id="navDashboard"><b>▦</b>Dashboard</button>
+<button class="nav" id="navSchedule"><b>👥</b>排班</button>
+<button class="nav active"><b>$</b>獎金</button>
+<button class="nav" id="navChecklist"><b>✓</b>Checklist</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const BONUS_KEY='store-manager-os-bonus-v1';
+const SCHEDULE_KEY='store-manager-os-schedule-v1';
+const STORE_OS_KEY='store-manager-os-v1';
+const params=new URLSearchParams(location.search);
+let storeKey=params.get('store')||'nansi';
+const stores={nansi:{name:'南西店'},beiche:{name:'北車店'}};
+if(!stores[storeKey])storeKey='nansi';
+
+const formatDate=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+const todayKey=()=>formatDate(new Date());
+let selectedDate=/^\d{4}-\d{2}-\d{2}$/.test(params.get('date')||'')?params.get('date'):todayKey();
+let currentRecord=null;
+let calculated=[];
+
+function readJson(key){try{const value=JSON.parse(localStorage.getItem(key));return value&&typeof value==='object'?value:{}}catch{return {}}}
+function writeJson(key,value){localStorage.setItem(key,JSON.stringify(value))}
+function readScheduleDay(date=selectedDate){return readJson(SCHEDULE_KEY)?.stores?.[storeKey]?.days?.[date]||{}}
+function readBonusRoot(){return readJson(BONUS_KEY)}
+function getBonusRecord(date=selectedDate){return readBonusRoot()?.stores?.[storeKey]?.days?.[date]||null}
+function minutes(value){if(!value)return null;const [h,m]=String(value).split(':').map(Number);return h*60+m}
+function hoursBetween(start,end){const a=minutes(start),b=minutes(end);if(a===null||b===null)return 0;let diff=b-a;if(diff<0)diff+=1440;return Math.max(0,diff/60)}
+function shiftHours(shift){
+  if(shift?.leave)return 0;
+  const gross=hoursBetween(shift.actualStart||shift.startTime,shift.actualEnd||shift.endTime);
+  return Math.max(0,gross-Number(shift.breakMinutes||0)/60);
+}
+function money(value){return '$'+Math.round(Number(value||0)).toLocaleString('zh-TW')}
+function number1(value){return Number(value||0).toFixed(1)}
+function escapeHtml(value=''){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function baseRecord(){
+  const shifts=Array.isArray(readScheduleDay().shifts)?readScheduleDay().shifts:[];
+  const lateMap=Object.fromEntries(shifts.map(s=>[s.name,Boolean(s.late)]));
+  return {pool:0,lateMap,confirmed:false,confirmedAt:null,updatedAt:null,results:[]};
+}
+function loadRecord(){
+  const saved=getBonusRecord();
+  currentRecord=saved?{...baseRecord(),...saved,lateMap:{...baseRecord().lateMap,...(saved.lateMap||{})}}:baseRecord();
+  document.getElementById('poolInput').value=currentRecord.pool||'';
+}
+function distributeIntegerPool(items,pool){
+  const eligible=items.filter(x=>x.effectiveHours>0);
+  const totalHours=eligible.reduce((sum,x)=>sum+x.effectiveHours,0);
+  if(!eligible.length||pool<=0||totalHours<=0)return items.map(x=>({...x,bonus:0}));
+  const exact=eligible.map(x=>({...x,exact:pool*x.effectiveHours/totalHours}));
+  const floors=exact.map(x=>({...x,bonus:Math.floor(x.exact),fraction:x.exact-Math.floor(x.exact)}));
+  let remainder=Math.round(pool)-floors.reduce((s,x)=>s+x.bonus,0);
+  floors.sort((a,b)=>b.fraction-a.fraction||a.name.localeCompare(b.name,'zh-Hant'));
+  for(let i=0;i<remainder;i++)floors[i%floors.length].bonus+=1;
+  const map=new Map(floors.map(x=>[x.id,x.bonus]));
+  return items.map(x=>({...x,bonus:map.get(x.id)||0}));
+}
+function calculate(){
+  const shifts=Array.isArray(readScheduleDay().shifts)?readScheduleDay().shifts:[];
+  const pool=Math.max(0,Math.round(Number(document.getElementById('poolInput').value||0)));
+  currentRecord.pool=pool;
+  const rows=shifts.map((shift,index)=>{
+    const scheduledHours=shiftHours(shift);
+    const late=Boolean(currentRecord.lateMap?.[shift.name]);
+    const effectiveHours=late||shift.leave?0:scheduledHours;
+    return {
+      id:shift.id||`${shift.name}-${index}`,
+      name:shift.name||'未命名',
+      code:shift.sourceShiftCode||shift.importedCode||'自訂',
+      start:shift.actualStart||shift.startTime||'--:--',
+      end:shift.actualEnd||shift.endTime||'--:--',
+      scheduledHours,
+      late,
+      leave:Boolean(shift.leave),
+      effectiveHours,
+      bonus:0
+    };
+  });
+  calculated=distributeIntegerPool(rows,pool);
+  currentRecord.results=calculated;
+  renderCalculation();
+}
+function renderCalculation(){
+  const scheduled=calculated.filter(x=>!x.leave);
+  const eligible=calculated.filter(x=>x.effectiveHours>0);
+  const hours=eligible.reduce((s,x)=>s+x.effectiveHours,0);
+  const allocated=calculated.reduce((s,x)=>s+x.bonus,0);
+  const pool=Number(currentRecord.pool||0);
+  document.getElementById('scheduledCount').textContent=scheduled.length;
+  document.getElementById('eligibleCount').textContent=eligible.length;
+  document.getElementById('eligibleHours').textContent=number1(hours)+'h';
+  document.getElementById('hourlyRate').textContent=hours?money(pool/hours):'$0';
+  document.getElementById('allocatedAmount').textContent=money(allocated);
+  document.getElementById('differenceAmount').textContent=money(pool-allocated);
+  document.getElementById('calcState').textContent=currentRecord.confirmed?'已確認':'即時計算';
+  const list=document.getElementById('employeeList');
+  list.innerHTML=calculated.length?calculated.map(row=>`
+    <div class="employee ${row.late?'late':''}">
+      <div class="employee-head">
+        <div><div class="employee-name">${escapeHtml(row.name)}</div><div class="employee-shift">${escapeHtml(row.code)} · ${row.start}–${row.end}${row.leave?' · 未上班':''}</div></div>
+        <div class="money">${money(row.bonus)}</div>
+      </div>
+      <div class="employee-grid">
+        <div class="metric"><small>原工時</small><strong>${number1(row.scheduledHours)}h</strong></div>
+        <div class="metric"><small>有效工時</small><strong>${number1(row.effectiveHours)}h</strong></div>
+        <div class="metric"><small>參與分配</small><strong>${row.effectiveHours>0?'是':'否'}</strong></div>
+      </div>
+      <button class="late-btn ${row.late?'active':''}" type="button" data-name="${escapeHtml(row.name)}" ${currentRecord.confirmed?'disabled':''}>${row.late?'已標記遲到・獎金 0':'標記遲到'}</button>
+    </div>`).join(''):'<div class="empty">這一天尚未建立排班，請先到 Schedule 匯入或新增班表。</div>';
+  list.querySelectorAll('.late-btn').forEach(btn=>btn.onclick=()=>{
+    const name=btn.dataset.name;
+    currentRecord.lateMap[name]=!currentRecord.lateMap[name];
+    currentRecord.confirmed=false;
+    calculate();
+  });
+  const status=document.getElementById('statusBox');
+  if(currentRecord.confirmed){status.className='status done';status.textContent=`已確認今日獎金，確認時間：${new Intl.DateTimeFormat('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(currentRecord.confirmedAt))}`;}
+  else if(!calculated.length){status.className='status warn';status.textContent='尚未讀取到今日排班。';}
+  else if(pool<=0){status.className='status warn';status.textContent='請輸入當日獎金總額。';}
+  else{status.className='status';status.textContent='計算完成。請確認遲到狀態後按「確認今日獎金」。';}
+}
+function saveRecord(){
+  const root=readBonusRoot();
+  root.version=1;root.updatedAt=new Date().toISOString();root.stores??={};root.stores[storeKey]??={days:{}};root.stores[storeKey].days??={};
+  currentRecord.updatedAt=new Date().toISOString();
+  root.stores[storeKey].days[selectedDate]=currentRecord;
+  writeJson(BONUS_KEY,root);
+}
+function saveDraft(){
+  calculate();saveRecord();renderMonth();toast('獎金草稿已儲存');
+}
+function syncDashboard(created){
+  const root=readJson(STORE_OS_KEY);
+  root.schemaVersion=6;root.updatedAt=new Date().toISOString();root.stores??={};root.stores[storeKey]??={days:{}};root.stores[storeKey].days??={};
+  const daily=root.stores[storeKey].days[selectedDate]||{schemaVersion:6,date:selectedDate,checklist:{openDone:false,closeDone:false},events:{openCount:0},orders:{unsubmitted:0,orderedWaiting:0,arrivedUnreceived:0},bonus:{created:false},staff:{scheduled:0,present:0,foh:0,boh:0},announcement:'公告將由後台發布。',revision:0};
+  daily.bonus={...(daily.bonus||{}),created:Boolean(created),pool:Number(currentRecord.pool||0),allocated:calculated.reduce((s,x)=>s+x.bonus,0)};
+  daily.revision=(Number(daily.revision)||0)+1;daily.updatedAt=new Date().toISOString();
+  root.stores[storeKey].days[selectedDate]=daily;writeJson(STORE_OS_KEY,root);
+  try{new BroadcastChannel('store-manager-os-sync').postMessage({type:'state-updated',storeKey,dateKey:selectedDate,revision:daily.revision})}catch{}
+}
+function confirmBonus(){
+  calculate();
+  if(!calculated.length)return toast('請先建立這一天的排班');
+  if(Number(currentRecord.pool||0)<=0)return toast('請輸入當日獎金總額');
+  if(calculated.every(x=>x.effectiveHours<=0))return toast('沒有可參與獎金分配的有效工時');
+  currentRecord.confirmed=true;currentRecord.confirmedAt=new Date().toISOString();
+  saveRecord();syncDashboard(true);renderCalculation();renderMonth();toast('今日獎金已確認');
+}
+function unlockBonus(){
+  if(!currentRecord.confirmed)return toast('目前尚未確認');
+  if(!confirm('解除確認後可重新修改遲到與獎金池，確定繼續？'))return;
+  currentRecord.confirmed=false;currentRecord.confirmedAt=null;saveRecord();syncDashboard(false);renderCalculation();renderMonth();toast('已解除確認');
+}
+function copyLineSummary(){
+  calculate();
+  if(!calculated.length)return toast('沒有可輸出的獎金明細');
+  const lines=[
+    `${stores[storeKey].name} ${selectedDate} 日獎金`,
+    `獎金池：${money(currentRecord.pool)}`,
+    `合格有效工時：${number1(calculated.reduce((s,x)=>s+x.effectiveHours,0))}h`,
+    '',
+    ...calculated.map(x=>`${x.name}｜${x.late?'遲到・不參與':x.leave?'未上班':number1(x.effectiveHours)+'h'}｜${money(x.bonus)}`),
+    '',
+    `合計：${money(calculated.reduce((s,x)=>s+x.bonus,0))}`
+  ];
+  navigator.clipboard?.writeText(lines.join('\n')).then(()=>toast('LINE 獎金明細已複製')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=lines.join('\n');document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('LINE 獎金明細已複製');
+  });
+}
+function renderMonth(){
+  const month=selectedDate.slice(0,7);
+  document.getElementById('monthLabel').textContent=month;
+  const days=readBonusRoot()?.stores?.[storeKey]?.days||{};
+  const totals={};
+  Object.entries(days).filter(([date,record])=>date.startsWith(month)&&record.confirmed).forEach(([,record])=>{
+    (record.results||[]).forEach(row=>{
+      totals[row.name]??={scheduled:0,effective:0,late:0,bonus:0};
+      totals[row.name].scheduled+=Number(row.scheduledHours||0);
+      totals[row.name].effective+=Number(row.effectiveHours||0);
+      totals[row.name].late+=row.late?1:0;
+      totals[row.name].bonus+=Number(row.bonus||0);
+    });
+  });
+  const entries=Object.entries(totals).sort((a,b)=>b[1].bonus-a[1].bonus||a[0].localeCompare(b[0],'zh-Hant'));
+  document.getElementById('monthBody').innerHTML=entries.length?entries.map(([name,t])=>`<tr><td>${escapeHtml(name)}</td><td>${number1(t.scheduled)}</td><td>${number1(t.effective)}</td><td>${t.late}</td><td>${money(t.bonus)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">本月尚無已確認的日獎金。</td></tr>';
+}
+function refreshData(){loadRecord();calculate();renderMonth();toast('已重新讀取排班與獎金資料')}
+function populateStoreSelect(){
+  const select=document.getElementById('storeSelect');
+  select.innerHTML=Object.entries(stores).map(([key,item])=>`<option value="${key}" ${key===storeKey?'selected':''}>${item.name}</option>`).join('');
+  select.onchange=()=>{const url=new URL(location.href);url.searchParams.set('store',select.value);url.searchParams.set('date',selectedDate);location.href=url.toString()};
+}
+function bindNavigation(){
+  const q=`?store=${encodeURIComponent(storeKey)}`;
+  document.getElementById('backLink').href='dashboard.html'+q;
+  document.getElementById('navDashboard').onclick=()=>location.href='dashboard.html'+q;
+  document.getElementById('navSchedule').onclick=()=>location.href='schedule.html'+q;
+  document.getElementById('navChecklist').onclick=()=>location.href='checklist.html'+q;
+}
+function renderHeader(){
+  document.getElementById('pageTitle').textContent=stores[storeKey].name+' 日獎金';
+  document.getElementById('dateText').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date(selectedDate+'T00:00:00'));
+  document.getElementById('dateInput').value=selectedDate;
+  document.getElementById('dateInput').onchange=e=>{selectedDate=e.target.value;const url=new URL(location.href);url.searchParams.set('date',selectedDate);url.searchParams.set('store',storeKey);history.replaceState(null,'',url);renderHeader();loadRecord();calculate();renderMonth()};
+  document.getElementById('poolInput').oninput=()=>{currentRecord.confirmed=false;calculate()};
+}
+function toast(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),1800)}
+function init(){populateStoreSelect();bindNavigation();renderHeader();loadRecord();calculate();renderMonth()}
+window.addEventListener('storage',e=>{if([SCHEDULE_KEY,BONUS_KEY,STORE_OS_KEY].includes(e.key))refreshData()});
+init();
+</script>
+</body>
+</html>
