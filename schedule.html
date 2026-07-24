@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#155eef">
+  <title>排班與職務指定 v0.8</title>
+  <style>
+    :root{--bg:#f4f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5eaf2;--primary:#155eef;--primary-soft:#eaf1ff;--green:#168a52;--green-soft:#eaf8f0;--yellow:#b7791f;--yellow-soft:#fff7e6;--red:#d64545;--red-soft:#fff0f0;--shadow:0 12px 30px rgba(28,51,84,.10)}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}button,input,select{font:inherit}a{text-decoration:none;color:inherit}.app{width:min(100%,720px);margin:auto;min-height:100vh;padding-bottom:96px}
+    .hero{padding:12px 16px 18px;color:#fff;background:linear-gradient(145deg,#0f4fcb,#155eef 58%,#4a87ff);border-radius:0 0 28px 28px;box-shadow:0 14px 30px rgba(21,94,239,.23)}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px}.back{display:inline-flex;align-items:center;gap:7px;color:#fff;font-size:13px;background:rgba(255,255,255,.14);padding:9px 11px;border-radius:12px}.icon{width:40px;height:40px;border:0;border-radius:13px;background:rgba(255,255,255,.16);color:#fff}
+    .store-row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:12px}.store-name{margin:0;font-size:22px}.meta{margin-top:7px;font-size:12px;opacity:.88}.store-select{appearance:none;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:8px 30px 8px 10px;font-size:12px;font-weight:800}.store-select option{color:#172033;background:#fff}
+    main{padding:16px 14px 0}.section-title{display:flex;justify-content:space-between;align-items:center;margin:0 4px 10px}.section-title h2{margin:0;font-size:18px}.section-title span{font-size:11px;color:var(--muted)}.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+    .date-tools{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}.date-btn{border:0;border-radius:13px;min-height:44px;padding:0 14px;background:#eef2f7;font-weight:900}.date-input{width:100%;border:1px solid var(--line);border-radius:13px;background:#fafbfd;padding:10px 12px;text-align:center;font-weight:900}
+    .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.summary{padding:11px;border:1px solid var(--line);border-radius:14px;background:#fafbfd}.summary small{display:block;font-size:9px;color:var(--muted)}.summary strong{display:block;margin-top:5px;font-size:17px}
+    .notice{padding:11px 12px;border-radius:14px;background:var(--yellow-soft);color:#805b19;font-size:11px;line-height:1.55}
+    .shift-list{display:grid;gap:10px}.shift-card{padding:13px;border:1px solid var(--line);border-radius:16px;background:#fafbfd}.shift-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.person{font-size:16px;font-weight:900}.dept-pill{padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900}.dept-pill.foh{background:var(--primary-soft);color:var(--primary)}.dept-pill.boh{background:var(--green-soft);color:var(--green)}
+    .shift-meta{margin-top:5px;font-size:11px;color:var(--muted);line-height:1.55}.station{margin-top:10px;padding:9px 10px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:12px}.station strong{color:var(--primary)}
+    .flags{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.flag{padding:5px 8px;border-radius:999px;font-size:10px;font-weight:850}.flag.late{background:var(--red-soft);color:var(--red)}.flag.leave{background:var(--yellow-soft);color:var(--yellow)}.flag.manager{background:var(--primary-soft);color:var(--primary)}.flag.ok{background:var(--green-soft);color:var(--green)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.small-btn{border:0;border-radius:11px;min-height:38px;font-size:11px;font-weight:850}.small-btn.secondary{background:#eef2f7;color:#445066}.small-btn.danger{background:var(--red-soft);color:var(--red)}
+    .empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:13px}
+    .fab{position:fixed;right:max(18px,calc((100vw - 720px)/2 + 18px));bottom:calc(82px + env(safe-area-inset-bottom));width:58px;height:58px;border:0;border-radius:50%;background:var(--primary);color:#fff;font-size:28px;box-shadow:0 14px 30px rgba(21,94,239,.35)}
+    .modal{position:fixed;inset:0;z-index:50;background:rgba(8,13,24,.72);display:none;align-items:flex-end;justify-content:center}.modal.show{display:flex}.modal-card{width:min(100%,720px);max-height:92vh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -18px 40px rgba(0,0,0,.22)}.modal-title{margin:0;font-size:20px}
+    .field{display:grid;gap:6px;margin-top:12px}.field label{font-size:12px;font-weight:800}.input,select{width:100%;border:1px solid var(--line);border-radius:13px;background:#fafbfd;padding:11px 12px;color:var(--text)}.time-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.break-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.break-btn{border:1px solid var(--line);background:#fff;color:var(--muted);min-height:40px;border-radius:11px;font-size:11px;font-weight:850}.break-btn.active{background:var(--primary-soft);border-color:#bfd0ff;color:var(--primary)}.hours-preview{padding:10px 12px;border-radius:12px;background:var(--green-soft);color:var(--green);font-size:12px;font-weight:850;line-height:1.5}.shift-code-row{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:center}.shift-code-badge{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:12px;background:var(--primary-soft);color:var(--primary);font-weight:900}.shift-code-note{font-size:11px;color:var(--muted);line-height:1.45}.check-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.role-btn{border:1px solid var(--line);background:#fff;color:var(--muted);padding:10px 8px;border-radius:12px;font-size:11px;font-weight:850;text-align:left}.role-btn.active{color:var(--primary);border-color:#bfd0ff;background:var(--primary-soft)}.textarea{min-height:92px;resize:vertical}.line-preview{white-space:pre-wrap;background:#111827;color:#fff;border-radius:16px;padding:14px;font-size:12px;line-height:1.65;max-height:360px;overflow:auto}.copy-btn{width:100%;border:0;border-radius:14px;min-height:48px;background:var(--green);color:#fff;font-weight:900;margin-top:10px}.copy-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.upload-box{border:1.5px dashed #bfd0ff;background:var(--primary-soft);border-radius:16px;padding:14px;text-align:center}.upload-box input{width:100%;font-size:12px}.import-status{margin-top:10px;padding:10px 12px;border-radius:12px;background:#fafbfd;border:1px solid var(--line);font-size:11px;line-height:1.55;color:var(--muted)}.import-status.good{background:var(--green-soft);color:var(--green)}.import-status.warn{background:var(--yellow-soft);color:var(--yellow)}.copy-tool{border:1px solid var(--line);background:#fff;color:var(--text);min-height:42px;border-radius:12px;font-size:11px;font-weight:850;padding:8px}.copy-tool.primary{background:var(--primary);border-color:var(--primary);color:#fff}.roster-row{display:grid;grid-template-columns:1fr auto;gap:8px}.roster-list{display:grid;gap:8px;margin-top:10px}.roster-item{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:13px;background:#fafbfd}.roster-main{min-width:0}.roster-name{font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.roster-dept{margin-top:3px;font-size:10px;color:var(--muted)}.roster-action{border:0;border-radius:9px;min-height:32px;padding:0 9px;font-size:10px;font-weight:850}.roster-action.edit{background:var(--primary-soft);color:var(--primary)}.roster-action.delete{background:var(--red-soft);color:var(--red)}.check-btn{border:1px solid var(--line);background:#fff;color:var(--muted);padding:10px 6px;border-radius:12px;font-size:11px;font-weight:850}.check-btn.active{color:var(--primary);border-color:#bfd0ff;background:var(--primary-soft)}.check-btn.active.danger{color:var(--red);border-color:#ffc7c7;background:var(--red-soft)}
+    .form-actions{display:grid;grid-template-columns:1fr 1.2fr;gap:10px;margin-top:14px}.btn{border:0;border-radius:14px;min-height:48px;font-weight:900}.btn.secondary{background:#eef2f7;color:#445066}.btn.primary{background:var(--primary);color:#fff}
+    nav{position:fixed;z-index:10;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,720px);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(10px)}.nav{border:0;background:transparent;min-height:56px;border-radius:14px;color:#8a94a4;font-size:11px}.nav.active{color:var(--primary);background:var(--primary-soft);font-weight:800}.nav b{display:block;font-size:18px;margin-bottom:4px}.toast{position:fixed;z-index:80;left:50%;bottom:108px;transform:translateX(-50%) translateY(18px);opacity:0;background:#172033;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:430px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="top">
+      <a class="back" id="backLink" href="dashboard.html">← Dashboard</a>
+      <button class="icon" type="button" onclick="openShiftModal()">＋</button>
+    </div>
+    <div class="store-row">
+      <div>
+        <h1 class="store-name" id="pageTitle">排班與職務指定</h1>
+        <div class="meta"><span id="todayText"></span> · 外場多職務／內場人員／LINE 公告</div>
+      </div>
+      <select class="store-select" id="storeSelect"></select>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-title"><h2>日期</h2><span>查看與編輯當日班表</span></div>
+    <section class="panel">
+      <div class="date-tools">
+        <button class="date-btn" type="button" onclick="moveDate(-1)">←</button>
+        <input class="date-input" id="scheduleDate" type="date">
+        <button class="date-btn" type="button" onclick="moveDate(1)">→</button>
+      </div>
+    </section>
+
+    <div class="section-title"><h2>Excel 匯入</h2><span>可匯入單日或整份班表</span></div>
+    <section class="panel">
+      <div class="upload-box">
+        <input id="scheduleExcelFile" type="file" accept=".xlsx,.xls">
+      </div>
+      <div class="import-status" id="excelImportStatus">尚未選擇班表檔案。</div>
+      <div class="field">
+        <label for="fullImportMode">整份班表遇到已有日期時</label>
+        <select id="fullImportMode">
+          <option value="empty">只匯入尚未建立的日期</option>
+          <option value="overwrite">覆蓋 Excel 內所有日期</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class="btn secondary" id="excelImportBtn" type="button" onclick="importExcelForSelectedDate()">匯入選擇日期</button>
+        <button class="btn primary" id="excelImportAllBtn" type="button" onclick="importExcelWholeWorkbook()">匯入整份班表</button>
+      </div>
+    </section>
+
+    <div class="section-title"><h2>快速建立</h2><span>減少每天重複輸入</span></div>
+    <section class="panel">
+      <div class="copy-tools">
+        <button class="copy-tool" type="button" onclick="copyScheduleByOffset(-1)">複製昨天</button>
+        <button class="copy-tool" type="button" onclick="copyScheduleByOffset(-7)">複製上週同日</button>
+        <button class="copy-tool primary" type="button" onclick="openCopyDate()">選擇日期</button>
+      </div>
+      <input class="date-input" id="copySourceDate" type="date" style="margin-top:10px;display:none">
+      <button class="btn primary" id="copySourceBtn" type="button" style="width:100%;margin-top:8px;display:none" onclick="copyFromSelectedDate()">確認複製</button>
+    </section>
+
+    <div class="section-title"><h2>員工名單</h2><span>點新增班別時直接選人</span></div>
+    <section class="panel">
+      <div class="roster-row">
+        <input class="input" id="newRosterName" placeholder="新增員工姓名">
+        <select id="newRosterDept" style="width:112px">
+          <option value="">未指定</option>
+          <option value="foh">外場</option>
+          <option value="boh">內場</option>
+        </select>
+      </div>
+      <button class="btn secondary" type="button" style="width:100%;margin-top:8px" onclick="addRosterMember()">加入員工名單</button>
+      <div class="roster-list" id="rosterList"></div>
+    </section>
+
+    <div class="section-title"><h2>今日人力</h2><span id="staffLabel">0 人</span></div>
+    <section class="panel">
+      <div class="summary-grid">
+        <div class="summary"><small>外場</small><strong id="fohCount">0</strong></div>
+        <div class="summary"><small>內場</small><strong id="bohCount">0</strong></div>
+        <div class="summary"><small>值班主管</small><strong id="managerCount">0</strong></div>
+        <div class="summary"><small>總工時</small><strong id="totalHours">0h</strong></div>
+      </div>
+      <div class="notice" id="coverageNotice" style="margin-top:12px">尚未建立班表。</div>
+    </section>
+
+    <div class="section-title"><h2>外場職務</h2><span>每人可複選多個職務</span></div>
+    <section class="panel"><div class="shift-list" id="fohList"></div></section>
+
+    <div class="section-title"><h2>內場人員</h2><span>內場只需人員與值班領班</span></div>
+    <section class="panel"><div class="shift-list" id="bohList"></div></section>
+
+    <div class="section-title"><h2>訂位與追蹤</h2><span>產生 LINE 公告內容</span></div>
+    <section class="panel">
+      <div class="field" style="margin-top:0">
+        <label for="reservationEarly">早班訂位</label>
+        <textarea class="input textarea" id="reservationEarly" placeholder="例如：4人桌*3、8人桌*1"></textarea>
+      </div>
+      <div class="field">
+        <label for="reservationLate">晚班訂位</label>
+        <textarea class="input textarea" id="reservationLate" placeholder="例如：2人桌*1、4人桌*1"></textarea>
+      </div>
+      <div class="field">
+        <label for="trackingNote">明天需追蹤事項</label>
+        <textarea class="input textarea" id="trackingNote" placeholder="暫無"></textarea>
+      </div>
+      <button class="btn primary" type="button" style="width:100%;margin-top:12px" onclick="saveDayNotes()">儲存訂位與追蹤事項</button>
+    </section>
+
+    <div class="section-title"><h2>LINE 公告</h2><span>一鍵複製貼到群組</span></div>
+    <section class="panel">
+      <div class="line-preview" id="linePreview">尚未建立班表。</div>
+      <button class="copy-btn" type="button" onclick="copyLinePost()">複製 LINE 公告</button>
+    </section>
+
+  </main>
+</div>
+
+<button class="fab" type="button" onclick="openShiftModal()">＋</button>
+
+<div class="modal" id="shiftModal">
+  <div class="modal-card">
+    <h2 class="modal-title" id="modalTitle">新增班別</h2>
+    <div class="field">
+      <label for="personSelect">選擇員工</label>
+      <select id="personSelect"></select>
+    </div>
+    <div class="field" id="customNameField" style="display:none">
+      <label for="personName">自訂姓名</label>
+      <input class="input" id="personName" placeholder="例如：新進員工">
+    </div>
+    <div class="field">
+      <label for="department">部門</label>
+      <select id="department">
+        <option value="foh">外場</option>
+        <option value="boh">內場</option>
+      </select>
+    </div>
+    <div class="field" id="roleField">
+      <label>外場／管理職務（可複選）</label>
+      <div class="role-grid" id="roleGrid"></div>
+    </div>
+    <div class="field">
+      <label>班別模板</label>
+      <div class="shift-code-row">
+        <select id="shiftCodeSelect">
+          <option value="">自由設定</option>
+          <option value="A">A 班</option>
+          <option value="E">E 班</option>
+          <option value="B">B 班</option>
+          <option value="F">F 班</option>
+          <option value="C">C 班</option>
+          <option value="D">D 班</option>
+          <option value="P3">P3 班</option>
+        </select>
+        <div class="shift-code-note" id="shiftCodeNote">選班別會自動帶入時間，也可直接用時鐘修改。</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>排班時間</label>
+      <div class="time-grid">
+        <input class="input" id="startTime" type="time" value="10:00">
+        <input class="input" id="endTime" type="time" value="18:00">
+      </div>
+    </div>
+    <div class="field">
+      <label>實際時間（獎金將使用這個工時）</label>
+      <div class="time-grid">
+        <input class="input" id="actualStart" type="time">
+        <input class="input" id="actualEnd" type="time">
+      </div>
+    </div>
+    <div class="field">
+      <label>休息時間（從有效工時扣除）</label>
+      <div class="break-grid">
+        <button class="break-btn" type="button" data-break="0" onclick="setBreakMinutes(0)">不休息</button>
+        <button class="break-btn" type="button" data-break="30" onclick="setBreakMinutes(30)">30 分鐘</button>
+        <button class="break-btn" type="button" data-break="60" onclick="setBreakMinutes(60)">60 分鐘</button>
+        <button class="break-btn" type="button" data-break="custom" onclick="showCustomBreak()">自訂</button>
+      </div>
+      <input class="input" id="customBreakMinutes" type="number" min="0" max="360" step="5" placeholder="輸入休息分鐘" style="display:none">
+      <div class="hours-preview" id="hoursPreview">有效工時：--</div>
+    </div>
+    <div class="field">
+      <label>狀態</label>
+      <div class="check-row">
+        <button class="check-btn" id="managerBtn" type="button" style="display:none"></button>
+        <button class="check-btn danger" id="lateBtn" type="button" onclick="toggleFlag('late')">遲到</button>
+        <button class="check-btn" id="leaveBtn" type="button" onclick="toggleFlag('leave')">請假／未到</button>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn secondary" type="button" onclick="closeShiftModal()">取消</button>
+      <button class="btn primary" type="button" onclick="saveShift()">儲存班別</button>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <button class="nav" onclick="location.href='index.html'"><b>⌂</b>首頁</button>
+  <button class="nav" onclick="location.href='dashboard.html?store='+encodeURIComponent(storeKey)"><b>▦</b>Dashboard</button>
+  <button class="nav active"><b>👥</b>排班</button>
+  <button class="nav" onclick="location.href='events.html'"><b>!</b>事件</button>
+  <button class="nav" onclick="location.href='orders.html'"><b>🧾</b>單據</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCHEDULE_KEY='store-manager-os-schedule-v1';
+const STORE_OS_KEY='store-manager-os-v1';
+const ROSTER_KEY='store-manager-os-roster-v1';
+const params=new URLSearchParams(location.search);
+let storeKey=params.get('store')||'nansi';
+const stores={nansi:{name:'南西店'},beiche:{name:'北車店'}};
+const DEFAULT_ROSTER={
+  nansi:[
+    {name:"高世偉",department:'boh'},
+    {name:"高有澤",department:'boh'},
+    {name:"張琮信",department:'boh'},
+    {name:"翁詩翊",department:'boh'},
+    {name:"鄭宗益",department:'boh'},
+    {name:"柯立辰",department:'boh'},
+    {name:"范姜佑文",department:''},
+    {name:"Angel",department:''},
+    {name:"Charris",department:''},
+    {name:"梁家豪",department:''},
+    {name:"張耀徽",department:''},
+    {name:"易海霞",department:''},
+    {name:"黃昱泰",department:''},
+    {name:"陳安思",department:''},
+    {name:"李易達",department:''},
+    {name:"鄭丞豈",department:''},
+    {name:"鍾沄軒",department:''},
+    {name:"鄭伊婷",department:''},
+    {name:"陳宇豪",department:''},
+    {name:"王律雅",department:''},
+    {name:"徐辰茵",department:''},
+    {name:"周佳穎",department:''},
+    {name:"郭芯妤Elva",department:''},
+    {name:"張胤一Poseidon",department:''},
+    {name:"周芷妤",department:''},
+    {name:"楊育佳",department:''},
+    {name:"寧子宸Patricia",department:''},
+    {name:"陳永鈞",department:''},
+    {name:"王紹安",department:''},
+    {name:"林佳芬",department:''},
+    {name:"詹育姍",department:''},
+    {name:"Angela",department:''}
+  ],
+  beiche:[
+    {name:"蔡尚諺",department:''},
+    {name:"時仕強",department:''}
+  ]
+};
+if(!stores[storeKey])storeKey='nansi';
+
+const formatDate=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+const todayKey=()=>formatDate(new Date());
+let selectedDate=todayKey();
+let editingId=null;
+let flags={manager:false,late:false,leave:false};
+let selectedRoles=[];
+let editingRosterName=null;
+let selectedBreakMinutes=0;
+let importedWorkbook=null;
+let importedFileName='';
+const SHIFT_CODES={
+  A:{startTime:'10:00',endTime:'19:00'},
+  E:{startTime:'10:00',endTime:'18:00'},
+  B:{startTime:'11:00',endTime:'20:00'},
+  F:{startTime:'11:30',endTime:'15:30'},
+  C:{startTime:'12:00',endTime:'21:00'},
+  D:{startTime:'13:00',endTime:'22:00'},
+  P3:{startTime:'18:00',endTime:'22:00'}
+};
+const ROLE_OPTIONS=['店長','代理店長','外場早班領班','外場晚班領班','內場值班領班','領檯','吧台主責','菜口主責','清機主責'];
+
+
+function readRosterRoot(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(ROSTER_KEY));
+    return parsed&&typeof parsed==='object'?parsed:{};
+  }catch{return {}}
+}
+function writeRosterRoot(root){
+  root.version=1;
+  root.updatedAt=new Date().toISOString();
+  localStorage.setItem(ROSTER_KEY,JSON.stringify(root));
+}
+function getRoster(){
+  const root=readRosterRoot();
+  const saved=root?.stores?.[storeKey];
+  if(Array.isArray(saved))return saved;
+  const defaults=(DEFAULT_ROSTER[storeKey]||[]).map(item=>({...item}));
+  root.stores??={};
+  root.stores[storeKey]=defaults;
+  writeRosterRoot(root);
+  return defaults;
+}
+function saveRoster(roster){
+  const root=readRosterRoot();
+  root.stores??={};
+  root.stores[storeKey]=roster;
+  writeRosterRoot(root);
+}
+function addRosterMember(){
+  const name=document.getElementById('newRosterName').value.trim();
+  const department=document.getElementById('newRosterDept').value;
+  if(!name)return toast('請輸入員工姓名');
+  const roster=[...getRoster()];
+  const duplicate=roster.some(item=>item.name===name&&item.name!==editingRosterName);
+  if(duplicate)return toast('員工名單已經有這個人');
+  if(editingRosterName){
+    const index=roster.findIndex(item=>item.name===editingRosterName);
+    if(index>=0)roster[index]={name,department};
+  }else{
+    roster.push({name,department});
+  }
+  saveRoster(roster);
+  document.getElementById('newRosterName').value='';
+  document.getElementById('newRosterDept').value='';
+  editingRosterName=null;
+  document.querySelector('[onclick="addRosterMember()"]').textContent='加入員工名單';
+  toast('員工名單已儲存');
+  renderRoster();
+  populatePersonSelect();
+}
+function renderRoster(){
+  const roster=getRoster();
+  const deptText=dept=>dept==='foh'?'外場':dept==='boh'?'內場':'未指定';
+  document.getElementById('rosterList').innerHTML=roster.length
+    ?roster.map(item=>`<div class="roster-item">
+      <div class="roster-main">
+        <div class="roster-name">${escapeHtml(item.name)}</div>
+        <div class="roster-dept">${deptText(item.department)}</div>
+      </div>
+      <button class="roster-action edit" type="button" onclick="editRosterMember('${encodeURIComponent(item.name)}')">編輯</button>
+      <button class="roster-action delete" type="button" onclick="deleteRosterMember('${encodeURIComponent(item.name)}')">刪除</button>
+    </div>`).join('')
+    :'<div class="empty">尚無員工名單</div>';
+}
+function editRosterMember(encodedName){
+  const name=decodeURIComponent(encodedName);
+  const item=getRoster().find(member=>member.name===name);
+  if(!item)return;
+  editingRosterName=name;
+  document.getElementById('newRosterName').value=item.name;
+  document.getElementById('newRosterDept').value=item.department||'';
+  document.querySelector('[onclick="addRosterMember()"]').textContent='儲存修改';
+  document.getElementById('newRosterName').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function deleteRosterMember(encodedName){
+  const name=decodeURIComponent(encodedName);
+  const used=getShifts().some(shift=>shift.name===name);
+  const warning=used?'這位員工已出現在目前日期班表中，刪除名單不會刪除既有班表。\\n\\n':'';
+  if(!confirm(`${warning}確定從員工名單刪除 ${name}？`))return;
+  saveRoster(getRoster().filter(item=>item.name!==name));
+  if(editingRosterName===name){
+    editingRosterName=null;
+    document.getElementById('newRosterName').value='';
+    document.getElementById('newRosterDept').value='';
+    document.querySelector('[onclick="addRosterMember()"]').textContent='加入員工名單';
+  }
+  toast('員工已從名單刪除');
+  renderRoster();
+  populatePersonSelect();
+}
+function populatePersonSelect(selectedName=''){
+  const roster=getRoster();
+  const select=document.getElementById('personSelect');
+  select.innerHTML='<option value="">請選擇員工</option>'+roster.map(item=>`<option value="${escapeHtml(item.name)}" data-dept="${item.department||''}" ${item.name===selectedName?'selected':''}>${escapeHtml(item.name)}（${item.department==='foh'?'外場':item.department==='boh'?'內場':'未指定'}）</option>`).join('')+'<option value="__custom__">＋ 自訂姓名</option>';
+  toggleCustomName();
+}
+function toggleCustomName(){
+  const custom=document.getElementById('personSelect').value==='__custom__';
+  document.getElementById('customNameField').style.display=custom?'grid':'none';
+  if(!custom){
+    const option=document.getElementById('personSelect').selectedOptions[0];
+    if(option?.dataset?.dept){
+      document.getElementById('department').value=option.dataset.dept;
+      updateDepartmentField();
+      renderRoleButtons();
+    }
+  }
+}
+
+
+function ensureSeedRosterMembers(){
+  const seeds=[
+    {name:'高世偉',department:'boh'},
+    {name:'高有澤',department:'boh'},
+    {name:'張琮信',department:'boh'},
+    {name:'翁詩翊',department:'boh'},
+    {name:'鄭宗益',department:'boh'},
+    {name:'柯立辰',department:'boh'}
+  ];
+  const roster=[...getRoster()];
+  const map=new Map(roster.map(item=>[item.name,item]));
+  let changed=false;
+  seeds.forEach(seed=>{
+    if(!map.has(seed.name)){
+      roster.push(seed);
+      changed=true;
+    }else if(!map.get(seed.name).department){
+      map.get(seed.name).department='boh';
+      changed=true;
+    }
+  });
+  if(changed)saveRoster(roster);
+}
+
+function migrateLegacyRoster(){
+  const root=readRosterRoot();
+  root.stores??={};
+  let changed=false;
+  for(const key of Object.keys(stores)){
+    const current=root.stores[key];
+    if(!Array.isArray(current)){
+      root.stores[key]=(DEFAULT_ROSTER[key]||[]).map(item=>({...item}));
+      changed=true;
+    }
+  }
+  if(changed)writeRosterRoot(root);
+}
+
+
+function normalizeCell(value){
+  return String(value??'').trim().replace(/\s+/g,'');
+}
+function excelDateKey(value){
+  const text=normalizeCell(value);
+  const match=text.match(/^(\d{1,2})\/(\d{1,2})/);
+  return match?`${Number(match[1])}/${Number(match[2])}`:'';
+}
+function selectedMonthDay(){
+  const d=new Date(selectedDate+'T12:00:00');
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+function setImportStatus(message,type=''){
+  const el=document.getElementById('excelImportStatus');
+  el.textContent=message;
+  el.className=`import-status ${type}`.trim();
+}
+function findScheduleSheet(workbook){
+  const preferred=workbook.SheetNames.find(name=>name.includes('排班'));
+  return preferred||workbook.SheetNames[0];
+}
+function findStoreBlocks(rows){
+  const headers=[];
+  rows.forEach((row,index)=>{
+    if(normalizeCell(row?.[0])==='類型'&&normalizeCell(row?.[1])==='姓名')headers.push(index);
+  });
+  if(!headers.length)return {};
+  const blocks={};
+  const firstStart=headers[0]+1;
+  const firstEnd=(headers[1]??rows.length)-1;
+  blocks.nansi={header:headers[0],start:firstStart,end:firstEnd};
+  if(headers[1]!==undefined)blocks.beiche={header:headers[1],start:headers[1]+1,end:rows.length-1};
+  return blocks;
+}
+function getRosterDepartment(name){
+  return getRoster().find(item=>item.name===name)?.department||'foh';
+}
+function createImportedShift(name,code){
+  const times=SHIFT_CODES[code];
+  const breakMinutes=suggestedBreakMinutes(times.startTime,times.endTime);
+  return {
+    id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
+    name,
+    department:getRosterDepartment(name,departmentHint),
+    roles:[],
+    startTime:times.startTime,
+    endTime:times.endTime,
+    actualStart:'',
+    actualEnd:'',
+    breakMinutes,
+    manager:false,
+    late:false,
+    leave:false,
+    importedCode:code,
+    sourceShiftCode:code,
+    importedAt:new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+}
+function workbookDateKey(value,baseYear){
+  const text=normalizeCell(value);
+  const match=text.match(/^(\d{1,2})\/(\d{1,2})/);
+  if(!match)return '';
+  const month=Number(match[1]),day=Number(match[2]);
+  if(month<1||month>12||day<1||day>31)return '';
+  return `${baseYear}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+}
+function parseWorkbookDateColumn(rows,block,dateCol,dateKey){
+  const shifts=[];
+  const candidates=[];
+  const skipped=[];
+  const newNames=[];
+  const rosterNames=new Set(getRoster().map(item=>item.name));
+  for(let i=block.start;i<=block.end;i++){
+    const row=rows[i]||[];
+    const type=normalizeCell(row[0]).toUpperCase();
+    const name=String(row[1]??'').trim();
+    if(!name)continue;
+    const raw=normalizeCell(row[dateCol]).toUpperCase();
+    if(!raw)continue;
+    if(raw.startsWith('候')){
+      candidates.push(`${name} ${raw}`);
+      continue;
+    }
+    if(['指休','公休','假','休','X','×'].includes(raw)){
+      skipped.push(`${name} ${raw}`);
+      continue;
+    }
+    if(!SHIFT_CODES[raw]){
+      skipped.push(`${name} ${raw}`);
+      continue;
+    }
+    const deptHint=type.includes('BOH')||type.includes('內場')?'boh':'foh';
+    shifts.push(createImportedShift(name,raw,deptHint));
+    if(!rosterNames.has(name))newNames.push({name,department:deptHint});
+  }
+  return {dateKey,shifts,candidates,skipped,newNames};
+}
+function parseWholeWorkbook(){
+  if(!importedWorkbook)throw new Error('請先選擇 Excel 班表');
+  const sheetName=findScheduleSheet(importedWorkbook);
+  const rows=XLSX.utils.sheet_to_json(importedWorkbook.Sheets[sheetName],{header:1,defval:''});
+  const blocks=findStoreBlocks(rows);
+  const block=blocks[storeKey];
+  if(!block)throw new Error(`找不到${stores[storeKey].name}區塊`);
+  const header=rows[block.header]||[];
+  const baseYear=new Date(selectedDate+'T12:00:00').getFullYear();
+  const days=[];
+  header.forEach((cell,dateCol)=>{
+    const dateKey=workbookDateKey(cell,baseYear);
+    if(!dateKey)return;
+    days.push(parseWorkbookDateColumn(rows,block,dateCol,dateKey));
+  });
+  if(!days.length)throw new Error('Excel 找不到可辨識的日期欄位');
+  return {sheetName,days};
+}
+
+function parseSelectedDateFromWorkbook(){
+  if(!importedWorkbook)throw new Error('請先選擇 Excel 班表');
+  const sheetName=findScheduleSheet(importedWorkbook);
+  const rows=XLSX.utils.sheet_to_json(importedWorkbook.Sheets[sheetName],{header:1,defval:''});
+  const blocks=findStoreBlocks(rows);
+  const block=blocks[storeKey];
+  if(!block)throw new Error(`找不到${stores[storeKey].name}區塊`);
+  const target=selectedMonthDay();
+  const header=rows[block.header]||[];
+  const dateCol=header.findIndex(cell=>excelDateKey(cell)===target);
+  if(dateCol<0)throw new Error(`Excel 找不到 ${target} 欄位`);
+  return {sheetName,target,...parseWorkbookDateColumn(rows,block,dateCol,selectedDate)};
+}
+function saveImportedShifts(result){
+  const existing=getShifts();
+  if(existing.length&&!confirm(`目前 ${result.target} 已有 ${existing.length} 筆班表，匯入後將覆蓋。確定繼續？`))return false;
+  if(result.newNames.length){
+    const roster=[...getRoster()];
+    const names=new Set(roster.map(item=>item.name));
+    result.newNames.forEach(item=>{if(!names.has(item.name)){roster.push({...item});names.add(item.name)}});
+    saveRoster(roster);
+    renderRoster();
+    populatePersonSelect();
+  }
+  const root=readRoot();
+  root.stores??={};
+  root.stores[storeKey]??={days:{}};
+  root.stores[storeKey].days??={};
+  const current=root.stores[storeKey].days[selectedDate]||{};
+  root.stores[storeKey].days[selectedDate]={
+    ...current,
+    shifts:result.shifts,
+    importedFrom:importedFileName,
+    importedSheet:result.sheetName,
+    candidates:result.candidates,
+    updatedAt:new Date().toISOString()
+  };
+  writeRoot(root);
+  syncDashboardStaff(result.shifts);
+  render();
+  return true;
+}
+function importExcelForSelectedDate(){
+  try{
+    const result=parseSelectedDateFromWorkbook();
+    if(!result.shifts.length){
+      setImportStatus(`${stores[storeKey].name} ${result.target} 沒有正式班別可匯入。`,'warn');
+      return;
+    }
+    if(!saveImportedShifts(result))return;
+    const notes=[
+      `已匯入 ${result.shifts.length} 人`,
+      result.candidates.length?`候補 ${result.candidates.length} 筆未列入正式班表`:'',
+      result.newNames.length?`新增 ${result.newNames.length} 位員工到名單`:''
+    ].filter(Boolean);
+    setImportStatus(notes.join('；'),'good');
+    toast('Excel 班表已匯入');
+  }catch(error){
+    setImportStatus(error.message||'Excel 匯入失敗','warn');
+  }
+}
+
+function mergeNewRosterMembers(items){
+  if(!items.length)return 0;
+  const roster=[...getRoster()];
+  const names=new Set(roster.map(item=>item.name));
+  let added=0;
+  items.forEach(item=>{
+    if(names.has(item.name))return;
+    roster.push({name:item.name,department:item.department||''});
+    names.add(item.name);
+    added++;
+  });
+  if(added){
+    saveRoster(roster);
+    renderRoster();
+    populatePersonSelect();
+  }
+  return added;
+}
+function importExcelWholeWorkbook(){
+  try{
+    const result=parseWholeWorkbook();
+    const mode=document.getElementById('fullImportMode').value;
+    const root=readRoot();
+    root.stores??={};
+    root.stores[storeKey]??={days:{}};
+    root.stores[storeKey].days??={};
+    const storeDays=root.stores[storeKey].days;
+    const allNewNames=[];
+    let importedDays=0,skippedExisting=0,emptyDays=0,totalShifts=0,totalCandidates=0;
+
+    result.days.forEach(day=>{
+      const hasExisting=Array.isArray(storeDays[day.dateKey]?.shifts)&&storeDays[day.dateKey].shifts.length>0;
+      if(mode==='empty'&&hasExisting){
+        skippedExisting++;
+        return;
+      }
+      if(!day.shifts.length){
+        emptyDays++;
+        if(mode==='overwrite'){
+          const current=storeDays[day.dateKey]||{};
+          storeDays[day.dateKey]={...current,shifts:[],importedFrom:importedFileName,importedSheet:result.sheetName,candidates:day.candidates,updatedAt:new Date().toISOString()};
+          importedDays++;
+        }
+        return;
+      }
+      const current=storeDays[day.dateKey]||{};
+      storeDays[day.dateKey]={
+        ...current,
+        shifts:day.shifts,
+        importedFrom:importedFileName,
+        importedSheet:result.sheetName,
+        candidates:day.candidates,
+        updatedAt:new Date().toISOString()
+      };
+      allNewNames.push(...day.newNames);
+      importedDays++;
+      totalShifts+=day.shifts.length;
+      totalCandidates+=day.candidates.length;
+    });
+
+    if(!importedDays){
+      setImportStatus(mode==='empty'?'所有 Excel 日期都已經有班表，沒有新增資料。':'整份 Excel 沒有可匯入的正式班別。','warn');
+      return;
+    }
+    writeRoot(root);
+    const addedRoster=mergeNewRosterMembers(allNewNames);
+    if(storeDays[selectedDate]?.shifts)syncDashboardStaff(storeDays[selectedDate].shifts);
+    render();
+
+    const notes=[
+      `已處理 ${importedDays} 天`,
+      `共匯入 ${totalShifts} 筆班別`,
+      skippedExisting?`略過 ${skippedExisting} 個已有日期`:'',
+      emptyDays?`${emptyDays} 天沒有正式班別`:'',
+      totalCandidates?`候補 ${totalCandidates} 筆未列入正式班表`:'',
+      addedRoster?`新增 ${addedRoster} 位員工到名單`:''
+    ].filter(Boolean);
+    setImportStatus(notes.join('；'),'good');
+    toast('整份 Excel 班表已匯入');
+  }catch(error){
+    setImportStatus(error.message||'整份 Excel 匯入失敗','warn');
+  }
+}
+
+
+function readRoot(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(SCHEDULE_KEY));
+    return parsed&&typeof parsed==='object'?parsed:{};
+  }catch{return {}}
+}
+function writeRoot(root){
+  root.version=8;
+  root.updatedAt=new Date().toISOString();
+  localStorage.setItem(SCHEDULE_KEY,JSON.stringify(root));
+}
+function getDayData(){
+  return readRoot()?.stores?.[storeKey]?.days?.[selectedDate]||{};
+}
+function getShifts(){
+  return getDayData()?.shifts||[];
+}
+function saveShifts(shifts){
+  const root=readRoot();
+  root.stores??={};
+  root.stores[storeKey]??={days:{}};
+  root.stores[storeKey].days??={};
+  const current=root.stores[storeKey].days[selectedDate]||{};
+  root.stores[storeKey].days[selectedDate]={...current,shifts,updatedAt:new Date().toISOString()};
+  writeRoot(root);
+  syncDashboardStaff(shifts);
+}
+function minutes(value){
+  if(!value)return null;
+  const [h,m]=value.split(':').map(Number);
+  return h*60+m;
+}
+function hoursBetween(start,end){
+  const a=minutes(start),b=minutes(end);
+  if(a===null||b===null)return 0;
+  let diff=b-a;
+  if(diff<0)diff+=24*60;
+  return Math.max(0,diff/60);
+}
+function detectShiftCode(start,end){
+  const match=Object.entries(SHIFT_CODES).find(([,times])=>times.startTime===start&&times.endTime===end);
+  return match?match[0]:'';
+}
+function applyShiftCode(code){
+  const select=document.getElementById('shiftCodeSelect');
+  const note=document.getElementById('shiftCodeNote');
+  if(!code||!SHIFT_CODES[code]){
+    select.value='';
+    note.textContent='自由設定時間';
+    updateImportedCodeFromTimes();
+    return;
+  }
+  const times=SHIFT_CODES[code];
+  document.getElementById('startTime').value=times.startTime;
+  document.getElementById('endTime').value=times.endTime;
+  selectedBreakMinutes=suggestedBreakMinutes(times.startTime,times.endTime);
+  document.getElementById('customBreakMinutes').style.display='none';
+  renderBreakButtons();
+  updateHoursPreview();
+  note.textContent=`${code} 班：${times.startTime}–${times.endTime}`;
+}
+function updateImportedCodeFromTimes(){
+  const start=document.getElementById('startTime').value;
+  const end=document.getElementById('endTime').value;
+  const detected=detectShiftCode(start,end);
+  const select=document.getElementById('shiftCodeSelect');
+  const note=document.getElementById('shiftCodeNote');
+  select.value=detected||'';
+  note.textContent=detected?`${detected} 班：${start}–${end}`:`自訂時間：${start||'--:--'}–${end||'--:--'}`;
+}
+
+function suggestedBreakMinutes(start,end){
+  const duration=hoursBetween(start,end);
+  if(duration>8)return 60;
+  if(duration>4)return 30;
+  return 0;
+}
+function shiftHours(shift){
+  if(shift.leave)return 0;
+  const gross=hoursBetween(shift.actualStart||shift.startTime,shift.actualEnd||shift.endTime);
+  const breakHours=Math.max(0,Number(shift.breakMinutes||0))/60;
+  return Math.max(0,gross-breakHours);
+}
+function setBreakMinutes(value){
+  selectedBreakMinutes=Math.max(0,Number(value)||0);
+  document.getElementById('customBreakMinutes').style.display='none';
+  renderBreakButtons();
+  updateHoursPreview();
+}
+function showCustomBreak(){
+  document.getElementById('customBreakMinutes').style.display='block';
+  document.getElementById('customBreakMinutes').focus();
+  renderBreakButtons(true);
+}
+function renderBreakButtons(custom=false){
+  document.querySelectorAll('.break-btn').forEach(btn=>{
+    const value=btn.dataset.break;
+    const active=custom?value==='custom':value!=='custom'&&Number(value)===selectedBreakMinutes;
+    btn.classList.toggle('active',active);
+  });
+}
+function updateHoursPreview(){
+  const start=document.getElementById('actualStart').value||document.getElementById('startTime').value;
+  const end=document.getElementById('actualEnd').value||document.getElementById('endTime').value;
+  const gross=hoursBetween(start,end);
+  const effective=Math.max(0,gross-selectedBreakMinutes/60);
+  document.getElementById('hoursPreview').textContent=`總時數 ${gross.toFixed(1)} 小時－休息 ${(selectedBreakMinutes/60).toFixed(selectedBreakMinutes%60?1:0)} 小時＝有效工時 ${effective.toFixed(1)} 小時`;
+}
+function syncDashboardStaff(shifts){
+  if(selectedDate!==todayKey())return;
+  let root={};
+  try{
+    const parsed=JSON.parse(localStorage.getItem(STORE_OS_KEY));
+    root=parsed&&typeof parsed==='object'?parsed:{};
+  }catch{}
+  root.stores??={};
+  root.stores[storeKey]??={days:{}};
+  root.stores[storeKey].days??={};
+  const current=root.stores[storeKey].days[selectedDate]||{};
+  const present=shifts.filter(s=>!s.leave);
+  root.stores[storeKey].days[selectedDate]={
+    ...current,
+    date:selectedDate,
+    staff:{
+      scheduled:shifts.length,
+      present:present.length,
+      foh:present.filter(s=>s.department==='foh').length,
+      boh:present.filter(s=>s.department==='boh').length
+    },
+    updatedAt:new Date().toISOString()
+  };
+  localStorage.setItem(STORE_OS_KEY,JSON.stringify(root));
+}
+function moveDate(offset){
+  const d=new Date(selectedDate+'T12:00:00');
+  d.setDate(d.getDate()+offset);
+  selectedDate=formatDate(d);
+  document.getElementById('scheduleDate').value=selectedDate;
+  render();
+}
+function coverageMessage(shifts){
+  const active=shifts.filter(s=>!s.leave);
+  const roles=new Set(active.flatMap(s=>s.roles||[]));
+  const notes=[];
+  if(!roles.has('店長')&&!roles.has('代理店長'))notes.push('尚未指定店長／代理店長');
+  if(!roles.has('領檯'))notes.push('尚未指定領檯');
+  if(!roles.has('吧台主責'))notes.push('尚未指定吧台主責');
+  if(!roles.has('菜口主責'))notes.push('尚未指定菜口主責');
+  if(!roles.has('清機主責'))notes.push('尚未指定清機主責');
+  if(!active.some(s=>s.department==='boh'))notes.push('內場尚未排班');
+  return notes.length?notes.join('；'):'當日主要職務已配置完成。';
+}
+function cardHtml(shift){
+  const hours=shiftHours(shift);
+  const time=`${shift.startTime}–${shift.endTime}`;
+  const actual=(shift.actualStart||shift.actualEnd)?`實際 ${shift.actualStart||'--:--'}–${shift.actualEnd||'--:--'}`:'尚未填實際時間';
+  const breakText=`休息 ${Number(shift.breakMinutes||0)} 分鐘`;
+  const codeText=shift.importedCode?` · ${escapeHtml(shift.importedCode)} 班`:'';
+  const flagsHtml=[
+    ...(shift.roles||[]).map(role=>`<span class="flag manager">${escapeHtml(role)}</span>`),
+    shift.late?'<span class="flag late">遲到・獎金 0</span>':'',
+    shift.leave?'<span class="flag leave">請假／未到</span>':'',
+    !shift.late&&!shift.leave?'<span class="flag ok">正常出勤</span>':''
+  ].join('');
+  return `<div class="shift-card">
+    <div class="shift-head">
+      <div>
+        <div class="person">${escapeHtml(shift.name)}</div>
+        <div class="shift-meta">${time}${codeText} · ${actual}<br>${breakText} · 有效工時 ${hours.toFixed(1)} 小時</div>
+      </div>
+      <span class="dept-pill ${shift.department}">${shift.department==='foh'?'外場':'內場'}</span>
+    </div>
+    
+    <div class="flags">${flagsHtml}</div>
+    <div class="actions">
+      <button class="small-btn secondary" type="button" onclick="editShift('${shift.id}')">修改</button>
+      <button class="small-btn danger" type="button" onclick="removeShift('${shift.id}')">刪除</button>
+    </div>
+  </div>`;
+}
+function escapeHtml(value=''){
+  return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function render(){
+  const shifts=getShifts();
+  const active=shifts.filter(s=>!s.leave);
+  const foh=active.filter(s=>s.department==='foh');
+  const boh=active.filter(s=>s.department==='boh');
+  document.getElementById('pageTitle').textContent=`${stores[storeKey].name} 排班與職務指定`;
+  document.getElementById('todayText').textContent=new Intl.DateTimeFormat('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).format(new Date(selectedDate+'T12:00:00'));
+  document.getElementById('backLink').href=`dashboard.html?store=${encodeURIComponent(storeKey)}`;
+  document.getElementById('scheduleDate').value=selectedDate;
+  document.getElementById('staffLabel').textContent=`${active.length} 人出勤`;
+  document.getElementById('fohCount').textContent=foh.length;
+  document.getElementById('bohCount').textContent=boh.length;
+  document.getElementById('managerCount').textContent=active.filter(s=>(s.roles||[]).some(r=>['店長','代理店長','外場早班領班','外場晚班領班','內場值班領班'].includes(r))).length;
+  document.getElementById('totalHours').textContent=active.reduce((sum,s)=>sum+shiftHours(s),0).toFixed(1)+'h';
+  document.getElementById('coverageNotice').textContent=coverageMessage(shifts);
+  document.getElementById('fohList').innerHTML=foh.length?foh.map(cardHtml).join(''):'<div class="empty">尚無外場人員。</div>';
+  document.getElementById('bohList').innerHTML=boh.length?boh.map(cardHtml).join(''):'<div class="empty">尚無內場人員。</div>';
+  const day=getDayData();
+  document.getElementById('reservationEarly').value=day.reservationEarly||'';
+  document.getElementById('reservationLate').value=day.reservationLate||'';
+  document.getElementById('trackingNote').value=day.trackingNote||'';
+  document.getElementById('linePreview').textContent=buildLinePost();
+}
+function openShiftModal(){
+  editingId=null;
+  flags={manager:false,late:false,leave:false};
+  selectedRoles=[];
+  document.getElementById('modalTitle').textContent='新增班別';
+  populatePersonSelect();
+  document.getElementById('personName').value='';
+  document.getElementById('department').value='foh';
+  renderRoleButtons();
+  document.getElementById('startTime').value='10:00';
+  document.getElementById('endTime').value='18:00';
+  document.getElementById('shiftCodeSelect').value='E';
+  document.getElementById('shiftCodeNote').textContent='E 班：10:00–18:00';
+  document.getElementById('actualStart').value='';
+  document.getElementById('actualEnd').value='';
+  selectedBreakMinutes=suggestedBreakMinutes(document.getElementById('startTime').value,document.getElementById('endTime').value);
+  document.getElementById('customBreakMinutes').value='';
+  document.getElementById('customBreakMinutes').style.display='none';
+  renderBreakButtons();
+  updateHoursPreview();
+  updateDepartmentField();
+  renderRoleButtons();
+  renderFlagButtons();
+  document.getElementById('shiftModal').classList.add('show');
+}
+function closeShiftModal(){document.getElementById('shiftModal').classList.remove('show')}
+function updateDepartmentField(){
+  document.getElementById('roleField').style.display='grid';
+}
+function renderRoleButtons(){
+  const department=document.getElementById('department').value;
+  const allowed=department==='boh'
+    ?['店長','代理店長','內場值班領班']
+    :ROLE_OPTIONS.filter(role=>role!=='內場值班領班');
+  selectedRoles=selectedRoles.filter(role=>allowed.includes(role));
+  document.getElementById('roleGrid').innerHTML=allowed.map(role=>`<button class="role-btn ${selectedRoles.includes(role)?'active':''}" type="button" data-role="${escapeHtml(role)}">${escapeHtml(role)}</button>`).join('');
+  document.querySelectorAll('.role-btn').forEach(btn=>btn.onclick=()=>{
+    const role=btn.dataset.role;
+    selectedRoles=selectedRoles.includes(role)?selectedRoles.filter(r=>r!==role):[...selectedRoles,role];
+    renderRoleButtons();
+  });
+}
+function toggleFlag(key){
+  flags[key]=!flags[key];
+  if(key==='leave'&&flags.leave)flags.late=false;
+  renderFlagButtons();
+}
+function renderFlagButtons(){
+  document.getElementById('managerBtn').classList.toggle('active',flags.manager);
+  document.getElementById('lateBtn').classList.toggle('active',flags.late);
+  document.getElementById('leaveBtn').classList.toggle('active',flags.leave);
+}
+function saveShift(){
+  const personChoice=document.getElementById('personSelect').value;
+  const name=personChoice==='__custom__'
+    ?document.getElementById('personName').value.trim()
+    :personChoice.trim();
+  const department=document.getElementById('department').value;
+  const startTime=document.getElementById('startTime').value;
+  const endTime=document.getElementById('endTime').value;
+  if(!name)return toast('請填寫人員姓名');
+  if(!startTime||!endTime)return toast('請填寫排班時間');
+  const shifts=getShifts();
+  const duplicate=shifts.find(s=>s.id!==editingId&&s.name===name);
+  if(duplicate&&!confirm(`${name} 已經在這一天的班表中，仍要重複加入嗎？`))return;
+  const item={
+    id:editingId||(crypto.randomUUID?crypto.randomUUID():String(Date.now())),
+    name,department,
+    roles:[...selectedRoles],
+    startTime,endTime,
+    actualStart:document.getElementById('actualStart').value,
+    actualEnd:document.getElementById('actualEnd').value,
+    breakMinutes:selectedBreakMinutes,
+    importedCode:detectShiftCode(startTime,endTime),
+    manager:flags.manager,
+    late:flags.late,
+    leave:flags.leave,
+    updatedAt:new Date().toISOString()
+  };
+  const index=shifts.findIndex(s=>s.id===editingId);
+  if(index>=0)shifts[index]=item;else shifts.push(item);
+  saveShifts(shifts);
+  closeShiftModal();
+  toast(index>=0?'班別已更新':'班別已新增');
+  render();
+}
+function editShift(id){
+  const shift=getShifts().find(s=>s.id===id);
+  if(!shift)return;
+  editingId=id;
+  flags={manager:false,late:Boolean(shift.late),leave:Boolean(shift.leave)};
+  selectedRoles=[...(shift.roles||[])];
+  document.getElementById('modalTitle').textContent='修改班別';
+  populatePersonSelect(shift.name);
+  if(!getRoster().some(item=>item.name===shift.name)){
+    document.getElementById('personSelect').value='__custom__';
+    document.getElementById('personName').value=shift.name;
+    toggleCustomName();
+  }
+  document.getElementById('department').value=shift.department;
+  selectedRoles=[...(shift.roles||[])];
+  document.getElementById('startTime').value=shift.startTime;
+  document.getElementById('endTime').value=shift.endTime;
+  document.getElementById('shiftCodeSelect').value=shift.importedCode&&SHIFT_CODES[shift.importedCode]?shift.importedCode:detectShiftCode(shift.startTime,shift.endTime);
+  updateImportedCodeFromTimes();
+  document.getElementById('actualStart').value=shift.actualStart||'';
+  document.getElementById('actualEnd').value=shift.actualEnd||'';
+  selectedBreakMinutes=Math.max(0,Number(shift.breakMinutes??suggestedBreakMinutes(shift.startTime,shift.endTime))||0);
+  document.getElementById('customBreakMinutes').value=selectedBreakMinutes;
+  document.getElementById('customBreakMinutes').style.display=[0,30,60].includes(selectedBreakMinutes)?'none':'block';
+  renderBreakButtons(![0,30,60].includes(selectedBreakMinutes));
+  updateHoursPreview();
+  updateDepartmentField();
+  renderRoleButtons();
+  renderFlagButtons();
+  document.getElementById('shiftModal').classList.add('show');
+}
+function removeShift(id){
+  const shifts=getShifts();
+  const shift=shifts.find(s=>s.id===id);
+  if(!shift||!confirm(`確定刪除 ${shift.name} 的班別？`))return;
+  saveShifts(shifts.filter(s=>s.id!==id));
+  toast('班別已刪除');
+  render();
+}
+
+
+
+function openCopyDate(){
+  const input=document.getElementById('copySourceDate');
+  const button=document.getElementById('copySourceBtn');
+  input.style.display='block';
+  button.style.display='block';
+  input.value=selectedDate;
+}
+function copyScheduleByOffset(offset){
+  const d=new Date(selectedDate+'T12:00:00');
+  d.setDate(d.getDate()+offset);
+  copyScheduleFrom(formatDate(d));
+}
+function copyFromSelectedDate(){
+  const source=document.getElementById('copySourceDate').value;
+  if(!source)return toast('請選擇來源日期');
+  copyScheduleFrom(source);
+}
+function copyScheduleFrom(sourceDate){
+  if(sourceDate===selectedDate)return toast('來源日期不能與目前日期相同');
+  const source=readRoot()?.stores?.[storeKey]?.days?.[sourceDate];
+  if(!source?.shifts?.length)return toast('來源日期沒有班表');
+  if(getShifts().length&&!confirm('目前日期已有班表，複製後將覆蓋。確定繼續？'))return;
+  const copied=source.shifts.map(shift=>({
+    ...shift,
+    id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),
+    actualStart:'',
+    actualEnd:'',
+    breakMinutes:Number(shift.breakMinutes??suggestedBreakMinutes(shift.startTime,shift.endTime)),
+    late:false,
+    leave:false,
+    updatedAt:new Date().toISOString()
+  }));
+  const root=readRoot();
+  root.stores??={};
+  root.stores[storeKey]??={days:{}};
+  root.stores[storeKey].days??={};
+  root.stores[storeKey].days[selectedDate]={
+    shifts:copied,
+    reservationEarly:'',
+    reservationLate:'',
+    trackingNote:'',
+    copiedFrom:sourceDate,
+    updatedAt:new Date().toISOString()
+  };
+  writeRoot(root);
+  syncDashboardStaff(copied);
+  toast(`已複製 ${sourceDate} 班表`);
+  render();
+}
+
+function saveDayNotes(silent=false){
+  const root=readRoot();
+  root.stores??={};
+  root.stores[storeKey]??={days:{}};
+  root.stores[storeKey].days??={};
+  const current=root.stores[storeKey].days[selectedDate]||{};
+  root.stores[storeKey].days[selectedDate]={
+    ...current,
+    reservationEarly:document.getElementById('reservationEarly').value.trim(),
+    reservationLate:document.getElementById('reservationLate').value.trim(),
+    trackingNote:document.getElementById('trackingNote').value.trim(),
+    updatedAt:new Date().toISOString()
+  };
+  writeRoot(root);
+  if(!silent)toast('訂位與追蹤事項已儲存');
+  if(!silent)render();
+}
+function displayTime(time){
+  if(!time)return '';
+  const [h,m]=time.split(':').map(Number);
+  return m===0?String(h):`${h}.${m===30?'5':String(m).padStart(2,'0')}`;
+}
+function buildLinePost(){
+  const shifts=getShifts().filter(s=>!s.leave);
+  const day=getDayData();
+  const d=new Date(selectedDate+'T12:00:00');
+  const weekday=['日','一','二','三','四','五','六'][d.getDay()];
+  const roleMap={};
+  ROLE_OPTIONS.forEach(role=>roleMap[role]=[]);
+  shifts.forEach(shift=>(shift.roles||[]).forEach(role=>{
+    if(roleMap[role]&&!roleMap[role].includes(shift.name))roleMap[role].push(shift.name);
+  }));
+  const line=value=>value.length?value.map(name=>'@'+name).join(' / '):'';
+  const roleLines=[
+    `店長/代理店長: ${line([...roleMap['店長'],...roleMap['代理店長']])}`,
+    `外場早班領班： ${line(roleMap['外場早班領班'])}`,
+    `外場晚班領班： ${line(roleMap['外場晚班領班'])}`,
+    `內場值班領班： ${line(roleMap['內場值班領班'])}`,
+    `領檯：${line(roleMap['領檯'])}`,
+    '',
+    `吧台主責： ${line(roleMap['吧台主責'])}`,
+    `菜口主責： ${line(roleMap['菜口主責'])}`,
+    `清機主責： ${line(roleMap['清機主責'])}`
+  ];
+  const shiftLines=shifts
+    .slice()
+    .sort((a,b)=>minutes(a.startTime)-minutes(b.startTime))
+    .map(s=>`@${s.name} ${displayTime(s.startTime)}-${displayTime(s.endTime)}`);
+  const tomorrow=new Date();
+  tomorrow.setDate(tomorrow.getDate()+1);
+  const isTomorrow=selectedDate===formatDate(tomorrow);
+  const reservationTitle=isTomorrow?'明日訂位':`${d.getMonth()+1}/${d.getDate()} 訂位`;
+  const trackingTitle=isTomorrow?'明天需追蹤事項':`${d.getMonth()+1}/${d.getDate()} 需追蹤事項`;
+  return `［${d.getMonth()+1}/${d.getDate()}（${weekday}）職務指定］
+
+${roleLines.join('\n')}
+
+${shiftLines.join('\n')}
+
+${reservationTitle}：
+早：
+${day.reservationEarly||'暫無'}
+晚：
+${day.reservationLate||'暫無'}
+
+${trackingTitle}：${day.trackingNote||'暫無'}`;
+}
+async function copyLinePost(){
+  saveDayNotes(true);
+  const missing=coverageMessage(getShifts());
+  if(missing!=='當日主要職務已配置完成。'&&!confirm(`職務尚未完整：
+${missing}
+
+仍要複製 LINE 公告嗎？`))return;
+  const text=buildLinePost();
+  try{
+    await navigator.clipboard.writeText(text);
+    toast('LINE 公告已複製');
+  }catch{
+    const area=document.createElement('textarea');
+    area.value=text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+    toast('LINE 公告已複製');
+  }
+}
+
+document.getElementById('shiftCodeSelect').addEventListener('change',e=>applyShiftCode(e.target.value));
+['startTime','endTime'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{
+  selectedBreakMinutes=suggestedBreakMinutes(document.getElementById('startTime').value,document.getElementById('endTime').value);
+  document.getElementById('customBreakMinutes').style.display='none';
+  renderBreakButtons();
+  updateHoursPreview();
+  updateImportedCodeFromTimes();
+}));
+['actualStart','actualEnd'].forEach(id=>document.getElementById(id).addEventListener('change',updateHoursPreview));
+document.getElementById('customBreakMinutes').addEventListener('input',e=>{
+  selectedBreakMinutes=Math.max(0,Number(e.target.value)||0);
+  renderBreakButtons(true);
+  updateHoursPreview();
+});
+
+
+document.getElementById('scheduleExcelFile').addEventListener('change',event=>{
+  const file=event.target.files?.[0];
+  importedWorkbook=null;
+  importedFileName='';
+  if(!file){
+    setImportStatus('尚未選擇班表檔案。');
+    return;
+  }
+  if(typeof XLSX==='undefined'){
+    setImportStatus('Excel 解析元件載入失敗，請確認網路後重新整理。','warn');
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      importedWorkbook=XLSX.read(e.target.result,{type:'array'});
+      importedFileName=file.name;
+      const sheet=findScheduleSheet(importedWorkbook);
+      setImportStatus(`已讀取 ${file.name}；工作表：${sheet}。請選日期後按匯入。`,'good');
+    }catch{
+      setImportStatus('無法讀取這個 Excel 檔案。','warn');
+    }
+  };
+  reader.onerror=()=>setImportStatus('讀取檔案失敗。','warn');
+  reader.readAsArrayBuffer(file);
+});
+
+document.getElementById('scheduleDate').addEventListener('change',e=>{selectedDate=e.target.value||todayKey();render()});
+document.getElementById('department').addEventListener('change',()=>{updateDepartmentField();renderRoleButtons()});
+document.getElementById('personSelect').addEventListener('change',toggleCustomName);
+document.getElementById('shiftModal').addEventListener('click',e=>{if(e.target.id==='shiftModal')closeShiftModal()});
+
+const storeSelect=document.getElementById('storeSelect');
+storeSelect.innerHTML=Object.entries(stores).map(([key,s])=>`<option value="${key}" ${key===storeKey?'selected':''}>${s.name}</option>`).join('');
+storeSelect.onchange=()=>{
+  const url=new URL(location.href);
+  url.searchParams.set('store',storeSelect.value);
+  location.href=url.toString();
+};
+
+window.addEventListener('storage',e=>{if(e.key===SCHEDULE_KEY||e.key===STORE_OS_KEY||e.key===ROSTER_KEY){renderRoster();render()}});
+window.addEventListener('focus',render);
+
+let toastTimer;
+function toast(message){
+  const el=document.getElementById('toast');
+  el.textContent=message;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),1800);
+}
+migrateLegacyRoster();
+  ensureSeedRosterMembers();
+renderRoster();
+populatePersonSelect();
+renderRoleButtons();
+render();
+</script>
+</body>
+</html>
